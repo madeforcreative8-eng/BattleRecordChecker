@@ -826,6 +826,65 @@ dialog { overflow-x:hidden; }
   .opponent-list .opponent-result { grid-column:2; text-align:right; }
   .opponent-list .opponent-row .btn { grid-column:2; justify-self:end; min-height:32px; padding:2px 8px; }
 }
+
+/* Ranking: compact, independent filters; replaces only the dashboard breakdown. */
+.side-panels.ranking-side{grid-template-columns:minmax(0,1fr);min-width:0}
+.ranking-panel{min-width:0}
+.ranking-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:12px}
+.ranking-controls .field{gap:4px;min-width:0}
+.ranking-controls label,.ranking-controls .field-label{font-size:.75rem;color:#667b54}
+.ranking-controls .control{font-size:.8125rem;min-height:40px;padding:8px 23px 8px 8px;background-position:right 7px center;text-overflow:ellipsis;min-width:0}
+.ranking-period-field{grid-column:1/-1}
+.ranking-order-button{width:100%;min-width:0;min-height:40px;padding:8px 6px;gap:5px;white-space:nowrap;font-size:.8125rem;color:#59704e}
+.ranking-order-button .icon{width:16px;height:16px}
+@media(max-width:760px){.ranking-order-button{min-height:44px;font-size:1rem}}
+.ranking-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 8px;color:#74816b;font-size:.75rem;flex-wrap:wrap}
+.ranking-list{display:grid;min-width:0}
+.ranking-row{display:grid;grid-template-columns:27px 34px minmax(0,1fr) auto;align-items:center;gap:7px;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:transparent;padding:11px 0;color:var(--ink);min-width:0;min-height:60px}
+.ranking-row:hover{background:#f4f8ef}
+.ranking-row .avatar{width:34px;height:34px;border-radius:8px}
+.ranking-place{font-weight:750;color:#74816b;font-size:.95rem;text-align:center;font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:anywhere}
+.ranking-place small{display:block;font-size:.65rem;font-weight:500}
+.ranking-place.place-1{color:#a98031}.ranking-place.place-2{color:#76858e}.ranking-place.place-3{color:#a16f47}
+.ranking-person{min-width:0;display:grid;gap:2px}
+.ranking-person strong{font-size:.875rem;line-height:1.4;overflow-wrap:anywhere}
+.ranking-person small{font-size:.68rem;color:#74816b;line-height:1.4;overflow-wrap:anywhere}
+.ranking-score{display:grid;gap:2px;text-align:right;white-space:nowrap;line-height:1.3;font-variant-numeric:tabular-nums}
+.ranking-score>strong{color:#506d3d;font-size:1rem;font-weight:750}
+.ranking-score small{font-size:.68rem;color:#74816b}
+.ranking-panel .chart-foot{margin-top:12px;font-size:.75rem;line-height:1.5}
+@media(max-width:760px){
+  .ranking-controls .control{font-size:1rem;min-height:44px}
+  .ranking-row{grid-template-columns:31px 42px minmax(0,1fr) auto;gap:9px;padding:10px 0}
+  .ranking-row .avatar{width:42px;height:42px}
+  .ranking-person strong{font-size:.875rem}.ranking-person small{font-size:.75rem}
+  .ranking-score small{font-size:.75rem}
+  .ranking-place{font-size:1.05rem}
+}
+@media(max-width:350px){.ranking-row{grid-template-columns:25px 33px minmax(0,1fr) auto;gap:5px}.ranking-row .avatar{width:33px;height:33px}.ranking-score small{font-size:.68rem}}
+
+
+/* Uniform dashboard headings and number baselines. */
+.stats-grid{grid-auto-rows:1fr}
+.stat-card{container-type:inline-size}
+.stat-label{font-size:.75rem;white-space:nowrap;gap:5px;line-height:1.5;min-height:18px}
+.stat-label>.icon{width:16px;height:16px;flex-shrink:0}
+@media(max-width:760px){.stat-card{padding-inline:12px}}
+@media(min-width:761px) and (max-width:1100px){.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:360px){.stat-label{font-size:.625rem}}
+@supports(font-size:1cqi){.stat-label{font-size:min(.8125rem,calc((100cqi - 22px)/9.3))}}
+
+/* A shared item/direction control; preserve native selects and only refresh results. */
+.individual-sort-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,auto);gap:10px;grid-column:1/-1;align-items:end;min-width:0}
+.individual-sort-controls .field{min-width:0}
+.individual-sort-controls .field>label,.individual-sort-controls .field>.field-label{color:#667b54;font-size:.875rem;line-height:1.5}
+.individual-sort-controls .control{width:100%;min-width:0;text-overflow:ellipsis}
+.individual-order-button{width:100%;min-width:0;min-height:48px;gap:6px;padding:8px 11px;font-size:.875rem;white-space:nowrap;color:#59704e}
+.individual-order-button .icon{width:16px;height:16px}
+.picker-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+.picker-filter-row .individual-order-button{background:#203b2a;color:#e9f3df;border-color:#476145;font-size:1rem;min-height:43px;border-radius:8px}
+.picker-filter-row .individual-order-button:hover:not(:disabled){background:#294734}
+@media(max-width:760px){.individual-sort-controls{gap:8px;grid-template-columns:minmax(0,1fr) minmax(92px,auto)}.individual-order-button{font-size:.875rem;min-height:48px}.picker-filter-row .individual-order-button{min-height:42px}.picker-filter-row{gap:6px}}
 </style>
 </head>
 <body>
@@ -1642,30 +1701,45 @@ dialog { overflow-x:hidden; }
   };
   const icon = (name, extra='') => `<svg class="icon ${extra}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.beetle}</svg>`;
   const methodIcons = ['push','back','lift','spirit','tko'];
+  // The existing comparators are reused; only the UI splits item and direction.
   const individualSortGroups = [
     ['総合的な強さ・3つの能力',[
-      ['strength','★ 総合的な強さ：高い順'],['strengthAsc','★ 総合的な強さ：低い順'],
-      ['power','💪🏻 パワー：高い順'],['powerAsc','💪🏻 パワー：低い順'],
-      ['technique','🏓 テクニック：高い順'],['techniqueAsc','🏓 テクニック：低い順'],
-      ['mental','🫀 メンタル：高い順'],['mentalAsc','🫀 メンタル：低い順'],
-      ['rating','3能力の合計：高い順'],['ratingAsc','3能力の合計：低い順']
+      ['strength','総合的な強さ'],['power','パワー'],['technique','テクニック'],['mental','メンタル'],['rating','3能力の合計']
     ]],
-    ['計測値',[
-      ['size','サイズ：大きい順'],['sizeAsc','サイズ：小さい順'],
-      ['weight','体重：重い順'],['weightAsc','体重：軽い順']
-    ]],
-    ['個体情報（文字・状態）',[
-      ['name','名前：あいうえお順'],['nameDesc','名前：逆順'],
-      ['species','種類：あいうえお順'],['speciesDesc','種類：逆順'],
-      ['status','状態：現役 → 引退 → 休養中 → 旅立ち'],['statusDesc','状態：旅立ち → 休養中 → 引退 → 現役'],
-      ['notes','備考1：文字順'],['notesDesc','備考1：文字の逆順']
-    ]],
-    ['日時',[
-      ['newest','登録日：新しい順'],['oldest','登録日：古い順'],
-      ['updatedNewest','更新日：新しい順'],['updatedOldest','更新日：古い順']
-    ]]
+    ['計測値',[['size','サイズ'],['weight','体重']]],
+    ['個体情報（文字・状態）',[['name','名前'],['species','種類'],['status','状態'],['notes','備考1']]],
+    ['日時',[['newest','登録日'],['updatedNewest','更新日']]]
   ];
-  const individualSortOptions = selected => individualSortGroups.map(([group,options])=>`<optgroup label="${esc(group)}">${options.map(([value,text])=>`<option value="${value}" ${selected===value?'selected':''}>${esc(text)}</option>`).join('')}</optgroup>`).join('');
+  const individualSortPairs = {
+    strength:['strengthAsc','strength'],power:['powerAsc','power'],technique:['techniqueAsc','technique'],
+    mental:['mentalAsc','mental'],rating:['ratingAsc','rating'],size:['sizeAsc','size'],weight:['weightAsc','weight'],
+    name:['name','nameDesc'],species:['species','speciesDesc'],status:['status','statusDesc'],notes:['notes','notesDesc'],
+    newest:['oldest','newest'],updatedNewest:['updatedOldest','updatedNewest']
+  };
+  const individualSortKey = (item,order) => (individualSortPairs[item]||individualSortPairs.strength)[order==='asc'?0:1];
+  const individualSortOptions = (selected,compact=false) => {
+    const options=items=>items.map(([value,text])=>`<option value="${value}" ${selected===value?'selected':''}>${esc(text)}</option>`).join('');
+    return compact?options([['strength','強さ'],['name','名前'],['size','サイズ'],['weight','体重'],['newest','登録日']]):individualSortGroups.map(([group,items])=>`<optgroup label="${esc(group)}">${options(items)}</optgroup>`).join('');
+  };
+  const individualOrderLabel = order => order==='asc'?'昇順 ↑':'降順 ↓';
+  const individualOrderAction = order => order==='asc'?'降順に切り替える':'昇順に切り替える';
+  function individualOrderButton(scope,order,disabled=false){
+    return `<button type="button" id="${scope}-order-button" class="btn individual-order-button" data-action="toggle-individual-order" data-scope="${scope}" aria-label="${individualOrderAction(order)}" title="${individualOrderAction(order)}" ${disabled?'disabled':''}>${icon('sort')}<span>${individualOrderLabel(order)}</span></button>`;
+  }
+  function individualSortControls(scope,item,order,disabled=false){
+    return `<div class="individual-sort-controls ${scope==='matrix'?'matchup-sort-field':'roster-sort-field'}"><div class="field"><label for="${scope}-sort">${scope==='matrix'?'相手の並べ替え項目':'並べ替え項目'}</label><select id="${scope}-sort" class="control" ${disabled?'disabled':''}>${individualSortOptions(item)}</select></div><div class="field"><span class="field-label">表示順</span>${individualOrderButton(scope,order,disabled)}</div></div>`;
+  }
+  function toggleIndividualOrder(button){
+    const scope=button.dataset.scope;
+    if(!['picker','roster','matrix'].includes(scope)||scope==='picker'&&!picker)return;
+    const target=scope==='picker'?picker:ui,key=scope==='picker'?'order':scope+'Order';
+    target[key]=target[key]==='asc'?'desc':'asc';
+    button.querySelector('span').textContent=individualOrderLabel(target[key]);
+    button.setAttribute('aria-label',individualOrderAction(target[key]));
+    button.title=individualOrderAction(target[key]);
+    if(scope==='picker'){picker.limit=40;renderPickerResults();$('picker-results').scrollTop=0;}
+    else if(!refreshSelectResults(scope+'-order'))render(false);
+  }
   const nf = n => new Intl.NumberFormat('ja-JP').format(n);
   const today = () => new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const label = record => record ? record.name || record.species : '不明な個体';
@@ -1677,12 +1751,12 @@ dialog { overflow-x:hidden; }
   function avatar(r, extra='') {if(r?.external){const text=esc(externalLabel(r));return `<span class="avatar external-avatar ${extra}" role="img" aria-label="${text}" title="${text}"><span class="external-avatar-label">${text}</span></span>`;}return `<span class="avatar ${extra}">${r?.photo ? `<img src="${esc(r.photo)}" alt="${esc(label(r))}" loading="lazy">` : icon('beetle')}</span>`;}
   function person(r, clickable=true, details=true) {const tag=clickable?'button':'div';return `<${tag} class="person ${clickable?'person-click':''}" ${clickable?`type="button" data-action="profile" data-id="${esc(r?.id)}"`:''}>${avatar(r)}<span><span class="person-name">${esc(label(r))}</span>${details?`<span class="person-detail" style="display:block">${esc(fullSize(r))}</span>`:''}</span></${tag}>`;}
   function statusBadge(r) {return `<span class="badge ${r.status==='現役'?'':r.status==='休養中'?'rest':'neutral'}">${esc(r.status)}</span>`;}
-  const ui={view:['records','matrix','individuals'].includes(location.hash.slice(1))?location.hash.slice(1):'records',menu:false,search:'',individual:'',historyMode:'all',historySpecies:'',historyStatus:'',method:'',result:'all',period:'all',page:1,historyOrder:'newest',profileHistoryOrder:'newest',rosterSearch:'',rosterSpecies:'',rosterStatus:'',rosterSort:'strength',matrixRow:'',matrixSpecies:'',matrixStatus:'',matrixSort:'strength',pairA:'',pairB:'',analysisId:''};
+  const ui={view:['records','matrix','individuals'].includes(location.hash.slice(1))?location.hash.slice(1):'records',menu:false,search:'',individual:'',historyMode:'all',historySpecies:'',historyStatus:'',method:'',result:'all',period:'all',page:1,historyOrder:'newest',profileHistoryOrder:'newest',rosterSearch:'',rosterSpecies:'',rosterStatus:'',rosterSort:'strength',rosterOrder:'desc',matrixRow:'',matrixSpecies:'',matrixStatus:'',matrixSort:'strength',matrixOrder:'desc',pairA:'',pairB:'',analysisId:'',rankingSort:'wins',rankingOrder:'desc',rankingPeriod:'all',rankingSpecies:'',rankingStatus:''};
   let state=C.emptyState(), repo=null, revision=null, recordMap=new Map(), stats=C.stats(state), pairMap=new Map(), byRecord=new Map();
   let pristineHtml='', saveError='', busy=false, unsaved=false, externalChange=false, toastTimer, dialogReturnFocus=null, pendingImport=null, formEditingId=null, deletedMatch=null, channel=null;
   let storageReadFailed=false, failedStoredState=null, importSequence=0, importKind='individuals';
   let picker=null, pickerReturnFocus=null, methodDetail=null, externalSaving=false;
-  const pickerPreferences={species:'',status:'',sort:'strength'};
+  const pickerPreferences={species:'',status:'',sort:'strength',order:'desc'};
 
   function rebuild() {
     recordMap=new Map(state.records.map(r=>[r.id,r]));stats=C.stats(state);pairMap=new Map();byRecord=new Map(state.records.map(r=>[r.id,[]]));
@@ -1696,6 +1770,7 @@ dialog { overflow-x:hidden; }
     if(!recordMap.has(ui.matrixRow))ui.matrixRow='';
     if(ui.matrixSpecies&&!state.records.some(r=>r.species===ui.matrixSpecies))ui.matrixSpecies='';
     if(ui.rosterSpecies&&!state.records.some(r=>r.species===ui.rosterSpecies))ui.rosterSpecies='';
+    if(ui.rankingSpecies&&!state.records.some(r=>r.species===ui.rankingSpecies))ui.rankingSpecies='';
   }
   function pairMatches(a,b){return pairMap.get([a,b].sort().join('\u0000'))||[];}
   function ordered(matches,order='newest'){const direction=order==='oldest'?1:-1;return [...matches].sort((a,b)=>direction*(a.date.localeCompare(b.date)||a.createdAt-b.createdAt||a.id.localeCompare(b.id)));}
@@ -1800,6 +1875,12 @@ dialog { overflow-x:hidden; }
       while(oldAnchor.nextElementSibling)oldAnchor.nextElementSibling.remove();
       for(const node of Array.from(newAnchor.parentElement.children).slice(Array.from(newAnchor.parentElement.children).indexOf(newAnchor)+1))oldAnchor.parentElement.append(node);
     };
+    if(id.startsWith('ranking-')&&ui.view==='records'){
+      const results=$('ranking-results');
+      if(!results)return false;
+      results.innerHTML=renderRankingResults();
+      return true;
+    }
     if(id.startsWith('roster-')&&ui.view==='individuals'){
       template.innerHTML=renderIndividuals();
       const tools=document.querySelector('.roster-tools'),nextTools=template.content.querySelector('.roster-tools');
@@ -1825,7 +1906,6 @@ dialog { overflow-x:hidden; }
       row.querySelectorAll('.filter-result,.reset-button').forEach(el=>el.remove());
       nextRow.querySelectorAll('.filter-result,.reset-button').forEach(el=>row.append(el));
       replaceFollowing(panel.querySelector('.filters'),nextPanel.querySelector('.filters'));
-      replaceNode(document.querySelector('.breakdown-panel'),template.content.querySelector('.breakdown-panel'));
       return true;
     }
     return false;
@@ -1833,7 +1913,7 @@ dialog { overflow-x:hidden; }
   function titleRow(kicker,title,description){return `<div class="page-title-row"><div><p class="eyebrow">${kicker}</p><h1>${title}</h1><p class="page-description">${description}</p></div><button class="btn primary" data-action="new-match">${icon('plus')}対戦を記録</button></div>`;}
   function renderDashboard(){
     const matches=filterMatches();const active=state.records.filter(r=>r.status==='現役').length;const distinctPairs=pairMap.size;
-    const statCards=[['登録個体',state.records.length,'個体',`${active}個体が現役`,'beetle','accent'],['記録した対戦',state.matches.length,'試合',state.matches.length?`最終対戦 ${displayDay(ordered(state.matches)[0].date)}`:'最初の対戦を記録しましょう','swords',''],['対戦した個体',stats.participants,'個体',`登録 ${state.records.length}個体のうち`,'users',''],['対戦した組み合わせ',distinctPairs,'組',`${C.METHODS.filter(m=>stats.methods[m]>0).length}種類の決まり手を記録`,'grid','']];
+    const statCards=[['登録個体',state.records.length,'個体',`${active}個体が現役`,'beetle','accent'],['記録した対戦',state.matches.length,'試合',state.matches.length?`最終対戦 ${displayDay(ordered(state.matches)[0].date)}`:'最初の対戦を記録しましょう','swords',''],['対戦した個体',stats.participants,'個体',`登録 ${state.records.length}個体のうち`,'users',''],['対戦した組み合わせ',distinctPairs,'通り',`${C.METHODS.filter(m=>stats.methods[m]>0).length}種類の決まり手を記録`,'grid','']];
     return `${titleRow('BATTLE RECORDS','戦績ダッシュボード','誰が、どんな勝ち方をしたか。対戦の記録をひと目で。')}
       <section class="stats-grid" aria-label="全戦績の概要">${statCards.map(([title,num,unit,note,ic,cl])=>`<div class="stat-card ${cl}"><div class="stat-label">${title}${icon(ic)}</div><div class="stat-number">${nf(num)}<span>${unit}</span></div><div class="stat-foot">${note}</div></div>`).join('')}</section>
       <div class="connection-strip"><div class="connection-info"><span class="connection-icon">${icon(state.records.length?'check':'upload')}</span><div><span class="connection-title">${state.records.length?esc(state.trainerName||'読み込んだ個体')+'の個体情報と連携中':'個体情報は未登録です'}</span><span class="connection-meta">${state.records.length?`${state.records.filter(r=>!r.external).length}個体 · 元アプリのJSONに対応${state.records.some(r=>r.external)?` / 外部${state.records.filter(r=>r.external).length}個体`:''}`:'元アプリのバックアップJSONを読み込んで始めましょう'}</span></div></div><button class="btn small" data-action="import">${icon('upload')}${state.records.length?'JSONで更新':'個体情報を読み込む'}</button></div>
@@ -1845,11 +1925,47 @@ dialog { overflow-x:hidden; }
           </div>
           ${renderHistory(matches)}
         </section>
-        <aside class="side-panels">${renderBreakdownPanel()}</aside>
+        <aside class="side-panels ranking-side">${renderRankingPanel()}</aside>
       </div>`;
   }
-  function renderBreakdownPanel(){
-    return `<section class="panel breakdown-panel"><div class="panel-head"><h2>勝ち方の内訳</h2><p class="panel-subtitle">対象個体と相手の勝ち方をタップして確認</p></div><div class="panel-body"><div class="breakdown-person"><span class="field-label">対象の個体</span>${individualSelect('analysis-individual',ui.analysisId,'内訳を見る個体を選択')}</div>${ui.analysisId?renderOutcomeBreakdowns(ui.analysisId,periodMatches(state.matches),'period'):'<p class="empty-breakdown">対象の個体を選ぶと、この個体と相手の勝ち方を表示します。</p>'}${ui.analysisId?`<p class="chart-foot">${periodLabel()}の対戦を集計 · この個体と相手の勝利を表示</p>`:''}</div></section>`;
+  const rankingSorts=[['wins','勝利数'],['rate','勝率'],['total','試合数']];
+  const rankingPeriods=[['all','すべての期間'],['30','直近30日'],['month','今月'],['year','今年']];
+  function rankingEntries(){
+    const totals=ui.rankingPeriod==='all'?stats:C.stats(state,periodMatches(state.matches,ui.rankingPeriod));
+    const primary=(a,b)=>{
+      const x=a.s,y=b.s;
+      if(ui.rankingSort==='rate')return y.wins*x.total-x.wins*y.total;
+      if(ui.rankingSort==='total')return y.total-x.total;
+      return y.wins-x.wins;
+    };
+    const entries=state.records.filter(r=>(!ui.rankingSpecies||r.species===ui.rankingSpecies)&&(!ui.rankingStatus||r.status===ui.rankingStatus)).map(r=>({r,s:totals.byId[r.id]})).filter(e=>e.s&&e.s.total>0);
+    entries.sort((a,b)=>primary(a,b)||b.s.wins-a.s.wins||b.s.wins*a.s.total-a.s.wins*b.s.total||b.s.total-a.s.total||label(a.r).localeCompare(label(b.r),'ja')||String(a.r.id).localeCompare(String(b.r.id)));
+    let rank=1;
+    const ranked=entries.map((e,i)=>{if(i&&primary(entries[i-1],e)!==0)rank=i+1;return {...e,rank};});
+    return ui.rankingOrder==='asc'?ranked.sort((a,b)=>b.rank-a.rank):ranked;
+  }
+  const rankingOrderLabel=()=>ui.rankingOrder==='asc'?'昇順 ↑':'降順 ↓';
+  const rankingOrderAction=()=>ui.rankingOrder==='asc'?'降順（数値が大きい順）に切り替える':'昇順（数値が小さい順）に切り替える';
+  function toggleRankingOrder(button){
+    ui.rankingOrder=ui.rankingOrder==='asc'?'desc':'asc';
+    button.querySelector('span').textContent=rankingOrderLabel();
+    button.setAttribute('aria-label',rankingOrderAction());
+    button.title=rankingOrderAction();
+    refreshSelectResults('ranking-order');
+  }
+  function renderRankingPanel(){
+    const species=[...new Set(state.records.map(r=>r.species).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+    const select=(id,items,selected)=>`<select id="${id}" class="control">${items.map(([v,t])=>`<option value="${esc(v)}" ${selected===v?'selected':''}>${esc(t)}</option>`).join('')}</select>`;
+    return `<section class="panel ranking-panel" aria-labelledby="ranking-title"><div class="panel-head"><h2 id="ranking-title">戦績ランキング</h2><p class="panel-subtitle">個体をタップすると詳細戦績を確認できます。</p></div><div class="panel-body"><div class="ranking-controls"><div class="field ranking-sort-field"><label for="ranking-sort">ランキング項目</label>${select('ranking-sort',rankingSorts,ui.rankingSort)}</div><div class="field ranking-order-field"><span class="field-label" id="ranking-order-label">表示順</span><button type="button" id="ranking-order-button" class="btn ranking-order-button" data-action="toggle-ranking-order" aria-label="${rankingOrderAction()}" title="${rankingOrderAction()}">${icon('sort')}<span>${rankingOrderLabel()}</span></button></div><div class="field ranking-period-field"><label for="ranking-period">集計期間</label>${select('ranking-period',rankingPeriods,ui.rankingPeriod)}</div><div class="field"><label for="ranking-species">種類</label>${select('ranking-species',[['','すべての種類'],...species.map(x=>[x,x])],ui.rankingSpecies)}</div><div class="field"><label for="ranking-status">状態</label>${select('ranking-status',[['','すべての状態'],...['現役','休養中','引退','旅立ち'].map(x=>[x,x])],ui.rankingStatus)}</div></div><div id="ranking-results">${renderRankingResults()}</div></div></section>`;
+  }
+  function renderRankingResults(){
+    const entries=rankingEntries();
+    const period=rankingPeriods.find(([v])=>v===ui.rankingPeriod)?.[1]||'すべての期間';
+    return `<div class="ranking-meta"><span>${esc(period)} · 対戦済み ${nf(entries.length)}個体</span><span>${ui.rankingOrder==='asc'?'下位から表示 · ':''}同点は同順位</span></div>${entries.length?`<div class="ranking-list">${entries.map(({r,s,rank})=>{
+      const rate=Number(s.winRate.toFixed(1));
+      const metric=ui.rankingSort==='rate'?rate+'%':ui.rankingSort==='total'?nf(s.total)+'試合':nf(s.wins)+'勝';
+      return `<button type="button" class="ranking-row" data-action="profile" data-id="${esc(r.id)}" aria-label="${esc(rank+'位 '+label(r)+'、'+s.wins+'勝 '+s.losses+'敗、勝率 '+rate+'%。詳細戦績を見る')}"><span class="ranking-place place-${Math.min(rank,4)}">${nf(rank)}<small>位</small></span>${avatar(r)}<span class="ranking-person"><strong>${esc(label(r))}</strong><small>${esc(r.species)}</small></span><span class="ranking-score"><strong>${metric}</strong><small><b class="win-mark">${nf(s.wins)}勝</b> <b class="lose-mark">${nf(s.losses)}敗</b></small><small>${nf(s.total)}試合 · ${rate}%</small></span></button>`;
+    }).join('')}</div>`:`<div class="no-records ranking-empty">${state.matches.length?'条件に合う対戦済みの個体がいません。':'対戦を記録するとランキングが表示されます。'}</div>`}<p class="chart-foot">未対戦の個体は対象外。外部個体も含みます。</p>`;
   }
   function renderOutcomeBreakdowns(individualId,matches,scope='all'){
     const breakdown=C.methodBreakdown(state,individualId,matches);
@@ -1873,9 +1989,9 @@ dialog { overflow-x:hidden; }
   function renderHistory(matches){
     if(!state.records.length)return `<div class="empty-state"><div class="empty-illustration" aria-hidden="true"><span class="empty-card">${icon('beetle')}</span><span class="empty-card second">${icon('file')}</span></div><h3>個体情報を読み込んで始めましょう</h3><p>元アプリで出力した個体情報JSONを読み込むと、<br>対戦を記録できます。</p><button class="btn primary" type="button" data-action="import-individuals">${icon('upload')}個体情報を読み込む</button><span class="empty-note">戦績を引き継ぐ場合は、バックアップメニューから読み込めます。</span></div>`;
     if(!matches.length)return `<div class="empty-state">${!state.matches.length?`<div class="empty-illustration" aria-hidden="true"><span class="empty-card">${icon('beetle')}</span><span class="empty-card second">${icon('beetle')}</span><span class="empty-vs">VS</span></div><h3>最初の1戦を、ここに。</h3><p>個体データは準備できています。<br>勝者・敗者・勝ち方を選んで記録しましょう。</p><button class="btn primary" data-action="new-match">${icon('plus')}対戦を記録する</button><span class="empty-note">実際の対戦記録はまだありません</span>`:`${icon('search')}<h3 style="margin-top:18px">条件に合う対戦がありません</h3><p>個体・勝ち方・期間の条件を変更してください。</p><button class="btn" data-action="reset-filters">絞り込みを解除</button>`}</div>`;
-    const pageCount=Math.ceil(matches.length/30);ui.page=Math.max(1,Math.min(ui.page,pageCount));const visible=matches.slice((ui.page-1)*30,ui.page*30);
+    const pageSize=10,pageCount=Math.ceil(matches.length/pageSize);ui.page=Math.max(1,Math.min(ui.page,pageCount));const visible=matches.slice((ui.page-1)*pageSize,ui.page*pageSize);
     return `<div class="dense-legend history-legend"><span class="history-legend-copy"><span><b class="win-mark">左：勝者</b> ／ <b class="lose-mark">右：敗者</b></span><small>行をタップで詳細・編集</small></span>${historySortButton('history',ui.historyOrder)}</div><div class="dense-history">${renderDenseMatches(visible)}</div>
-      <div class="history-bottom"><span>${nf((ui.page-1)*30+1)}–${nf(Math.min(ui.page*30,matches.length))} / ${nf(matches.length)}試合</span>${pageCount>1?`<div class="pager"><button class="btn" data-action="prev-page" ${ui.page===1?'disabled':''}>前へ</button><span>${ui.page} / ${pageCount}</span><button class="btn" data-action="next-page" ${ui.page===pageCount?'disabled':''}>次へ</button></div>`:`<span>${orderLabel(ui.historyOrder)}に表示</span>`}</div>`;
+      <div class="history-bottom"><span>${nf((ui.page-1)*pageSize+1)}–${nf(Math.min(ui.page*pageSize,matches.length))} / ${nf(matches.length)}試合</span>${pageCount>1?`<div class="pager"><button class="btn" data-action="prev-page" ${ui.page===1?'disabled':''}>前へ</button><span>${ui.page} / ${pageCount}</span><button class="btn" data-action="next-page" ${ui.page===pageCount?'disabled':''}>次へ</button></div>`:`<span>${orderLabel(ui.historyOrder)}に表示</span>`}</div>`;
   }
   function renderDenseMatches(matches,fromMethod=false){
     return matches.map(m=>`<button type="button" class="dense-match" data-action="match-detail" data-id="${esc(m.id)}" ${fromMethod?'data-from-method="true"':''} aria-label="${esc(displayDay(m.date)+'、勝者 '+label(recordMap.get(m.winnerId))+'、敗者 '+label(recordMap.get(m.loserId))+'、'+m.method+'。詳細を表示')}"><time class="dense-date" datetime="${m.date}">${displayDay(m.date)}</time><span class="dense-person winner">${avatar(recordMap.get(m.winnerId))}<strong>${esc(label(recordMap.get(m.winnerId)))}</strong></span><span class="dense-vs" aria-hidden="true">VS</span><span class="dense-person loser">${avatar(recordMap.get(m.loserId))}<strong>${esc(label(recordMap.get(m.loserId)))}</strong></span><span class="dense-method">${methodPill(m.method)}</span><span class="dense-open" aria-hidden="true">···</span></button>`).join('');
@@ -1888,13 +2004,13 @@ dialog { overflow-x:hidden; }
   function renderMatrix(){
     const focal=recordMap.get(ui.matrixRow);
     const allOpponents=focal?state.records.filter(r=>r.id!==focal.id):[];
-    const opponents=C.queryIndividuals(allOpponents,{species:ui.matrixSpecies,status:ui.matrixStatus,sort:ui.matrixSort});
+    const opponents=C.queryIndividuals(allOpponents,{species:ui.matrixSpecies,status:ui.matrixStatus,sort:individualSortKey(ui.matrixSort,ui.matrixOrder)});
     const species=[...new Set(state.records.map(r=>r.species))].sort((a,b)=>a.localeCompare(b,'ja'));
     const filtered=!!(ui.matrixSpecies||ui.matrixStatus);
     return `${titleRow('HEAD TO HEAD','相性マトリクス','対象を1個体選び、すべての相手との勝敗を確認。種類・状態での絞り込みや並べ替えができます。')}${renderPairPanel()}
       <section class="panel matchup-panel"><div class="panel-head section-heading"><h2>1個体から見る相性表</h2><span class="count-badge">${focal?`${nf(opponents.length)} / ${nf(allOpponents.length)}個体`:'対象を選択'}</span></div>
         <div class="matchup-controls"><div class="field matchup-subject"><span class="field-label">対象の個体</span>${individualSelect('matrix-row',ui.matrixRow,'相性表の対象個体を選択')}</div><div class="matchup-filters"><div class="field"><label for="matrix-species">相手の種類</label><select id="matrix-species" class="control" ${!focal?'disabled':''}><option value="">すべての種類</option>${species.map(value=>`<option value="${esc(value)}" ${ui.matrixSpecies===value?'selected':''}>${esc(value)}</option>`).join('')}</select></div><div class="field"><label for="matrix-status">相手の状態</label><select id="matrix-status" class="control" ${!focal?'disabled':''}><option value="">すべての状態</option>${['現役','休養中','引退','旅立ち'].map(value=>`<option value="${value}" ${ui.matrixStatus===value?'selected':''}>${value}</option>`).join('')}</select></div></div>
-          <div class="field matchup-sort-field"><label for="matrix-sort">相手の並び順</label><select id="matrix-sort" class="control" ${!focal?'disabled':''}>${individualSortOptions(ui.matrixSort)}</select></div>
+          ${individualSortControls('matrix',ui.matrixSort,ui.matrixOrder,!focal)}
         </div>
         ${!focal?'<div class="no-records">対象の個体を1匹選ぶと、すべての相手との戦績を表示します。</div>':`<div class="matchup-summary"><span><strong>${esc(label(focal))}</strong>から見た戦績 · 全期間</span>${filtered?'<button class="btn ghost small" type="button" data-action="reset-matrix-filters">相手の条件をクリア</button>':'<span class="muted">未対戦の相手も表示</span>'}</div>${opponents.length?renderMatchupTable(focal,opponents):`<div class="no-records">${allOpponents.length?'条件に合う対戦相手がいません。種類・状態の条件を変更してください。':'ほかの個体を登録すると、相性表に表示されます。'}</div>`}`}
         ${focal&&opponents.length?'<div class="matrix-legend"><span><i class="legend-dot" style="background:#afd68b"></i>全勝</span><span><i class="legend-dot" style="background:#e78c7c"></i>全敗</span><span><i class="legend-dot" style="background:#d7eac5"></i>勝ち越し</span><span><i class="legend-dot" style="background:#f6d4c9"></i>負け越し</span><span><i class="legend-dot" style="background:#a6c7ee"></i>互角</span><span><i class="legend-dot" style="background:#f7f8f4"></i>未対戦</span><span>名前・詳細を押すと対戦履歴</span></div>':''}
@@ -1911,7 +2027,7 @@ dialog { overflow-x:hidden; }
   }
   function renderPairPanel(){const a=recordMap.get(ui.pairA),b=recordMap.get(ui.pairB),matches=pairMatches(ui.pairA,ui.pairB);const wa=matches.filter(m=>m.winnerId===ui.pairA).length;return `<section class="panel pair-panel"><div class="pair-header"><h2>2個体を比べる</h2><span class="badge neutral">直接対決</span></div><div class="pair-grid"><div class="pair-contender"><div class="field">${individualSelect('pair-a',ui.pairA,'個体Aを選択',true)}<small>${a?esc(fullSize(a)):'個体を選択してください'}</small></div></div><div class="pair-score"><div class="pair-numbers">${wa}<span class="divider">:</span>${matches.length-wa}</div><div class="pair-meta">${matches.length?`${matches.length}試合の勝数`:'まだ未対戦'}</div></div><div class="pair-contender"><div class="field">${individualSelect('pair-b',ui.pairB,'個体Bを選択',true)}<small>${b?esc(fullSize(b)):'個体を選択してください'}</small></div></div></div><div class="pair-detail"><button class="btn small" data-action="pair" data-a="${esc(ui.pairA)}" data-b="${esc(ui.pairB)}" ${!a||!b?'disabled':''}>対戦履歴を見る</button><button class="btn ghost small" data-action="new-pair-match" data-a="${esc(ui.pairA)}" data-b="${esc(ui.pairB)}" ${!a||!b?'disabled':''}>${icon('plus')}この組み合わせで記録</button></div></section>`;}
   function renderIndividuals(){
-    const records=C.queryIndividuals(state.records,{query:ui.rosterSearch,species:ui.rosterSpecies,status:ui.rosterStatus,sort:ui.rosterSort});
+    const records=C.queryIndividuals(state.records,{query:ui.rosterSearch,species:ui.rosterSpecies,status:ui.rosterStatus,sort:individualSortKey(ui.rosterSort,ui.rosterOrder)});
     const species=[...new Set(state.records.map(r=>r.species))].sort((a,b)=>a.localeCompare(b,'ja'));
     const filtered=!!(ui.rosterSearch.trim()||ui.rosterSpecies||ui.rosterStatus);
     const cards=records.map(r=>{
@@ -1922,7 +2038,7 @@ dialog { overflow-x:hidden; }
       <div class="collection-tools roster-tools">
         <div class="field roster-search-field"><label for="roster-search">個体を検索</label><div class="search-field">${icon('search')}<input id="roster-search" class="control" type="search" placeholder="名前・種類・サイズなど" value="${esc(ui.rosterSearch)}" aria-describedby="roster-search-hint" autocomplete="off" enterkeyhint="search"></div><p id="roster-search-hint" class="roster-search-hint">名前・種類・トレーナー名・備考・個体ID・サイズを検索。空白で区切ると、すべての語を含む個体に絞れます。</p></div>
         <div class="roster-filter-row"><div class="field"><label for="roster-species">種類</label><select id="roster-species" class="control"><option value="">すべての種類</option>${species.map(value=>`<option value="${esc(value)}" ${ui.rosterSpecies===value?'selected':''}>${esc(value)}</option>`).join('')}</select></div><div class="field"><label for="roster-status">状態</label><select id="roster-status" class="control"><option value="">すべての状態</option>${['現役','休養中','引退','旅立ち'].map(value=>`<option value="${value}" ${ui.rosterStatus===value?'selected':''}>${value}</option>`).join('')}</select></div></div>
-        <div class="field roster-sort-field"><label for="roster-sort">並び順</label><select id="roster-sort" class="control">${individualSortOptions(ui.rosterSort)}</select></div>
+        ${individualSortControls('roster',ui.rosterSort,ui.rosterOrder)}
         <div class="roster-result-meta"><span class="collection-count" role="status" aria-live="polite">${nf(records.length)} / ${nf(state.records.length)}個体</span>${filtered?'<button class="btn ghost small" type="button" data-action="reset-roster-filters">条件をクリア</button>':''}</div>
       </div>${records.length?`<div class="collection-grid">${cards}</div>`:empty}`;
   }
@@ -1955,7 +2071,7 @@ dialog { overflow-x:hidden; }
     if(picker.species&&!species.includes(picker.species))picker.species='';
     const historyPicker=picker.target==='filter-individual',grouped=historyPicker&&picker.historyTab!=='individual';
     const tabs=historyPicker?`<div class="history-picker-tabs" role="tablist" aria-label="履歴の対象を選ぶ方法">${[['individual','個体ごと'],['species','種類ごと'],['status','状態ごと']].map(([mode,title])=>`<button id="history-picker-tab-${mode}" type="button" role="tab" aria-selected="${picker.historyTab===mode}" aria-controls="picker-results" tabindex="${picker.historyTab===mode?'0':'-1'}" data-action="history-picker-tab" data-mode="${mode}">${title}</button>`).join('')}</div>`:'';
-    const tools=grouped?`<p class="history-picker-description">${picker.historyTab==='species'?'種類':'状態'}を選ぶと、その個体群が参加した対戦を表示します。<br>現在の個体情報で分類し、外部個体も含みます。</p>`:`<div class="picker-search search-field">${icon('search')}<input id="picker-search" class="control" type="search" placeholder="名前・種類・トレーナー名・サイズを検索" value="${esc(picker.query)}" aria-label="個体を検索" autocomplete="off" enterkeyhint="search"></div><div class="picker-filter-row"><select id="picker-species" class="control" aria-label="種類で絞り込み"><option value="">すべての種類</option>${species.map(s=>`<option value="${esc(s)}" ${picker.species===s?'selected':''}>${esc(s)}</option>`).join('')}</select><select id="picker-status" class="control" aria-label="状態で絞り込み"><option value="">すべての状態</option>${['現役','休養中','引退','旅立ち'].map(s=>`<option ${picker.status===s?'selected':''}>${s}</option>`).join('')}</select><select id="picker-sort" class="control" aria-label="個体の並べ替え">${[['strength','強さが高い順'],['name','名前順'],['size-desc','サイズが大きい順'],['size-asc','サイズが小さい順'],['weight-desc','体重が重い順'],['newest','登録が新しい順']].map(([v,t])=>`<option value="${v}" ${picker.sort===v?'selected':''}>${t}</option>`).join('')}</select></div>`;
+    const tools=grouped?`<p class="history-picker-description">${picker.historyTab==='species'?'種類':'状態'}を選ぶと、その個体群が参加した対戦を表示します。<br>現在の個体情報で分類し、外部個体も含みます。</p>`:`<div class="picker-search search-field">${icon('search')}<input id="picker-search" class="control" type="search" placeholder="名前・種類・トレーナー名・サイズを検索" value="${esc(picker.query)}" aria-label="個体を検索" autocomplete="off" enterkeyhint="search"></div><div class="picker-filter-row"><select id="picker-species" class="control" aria-label="種類で絞り込み"><option value="">すべての種類</option>${species.map(s=>`<option value="${esc(s)}" ${picker.species===s?'selected':''}>${esc(s)}</option>`).join('')}</select><select id="picker-status" class="control" aria-label="状態で絞り込み"><option value="">すべての状態</option>${['現役','休養中','引退','旅立ち'].map(s=>`<option ${picker.status===s?'selected':''}>${s}</option>`).join('')}</select><select id="picker-sort" class="control" aria-label="個体の並べ替え項目">${individualSortOptions(picker.sort,true)}</select>${individualOrderButton('picker',picker.order)}</div>`;
     $('individual-picker').innerHTML=`<div class="picker-header"><div><p class="eyebrow">BEATMATE · 個体データベース</p><h2 id="picker-title" tabindex="-1">${esc(picker.title)}</h2><p>${historyPicker?'個体・種類・状態から、履歴に表示する対象を選択':'写真・名前・種類から探して、カードをタップ'}</p></div><button class="icon-button" type="button" data-action="close-picker" aria-label="個体選択を閉じる">${icon('close')}</button></div><div class="picker-tools">${tabs}${picker.target.startsWith('match-')?`<button class="btn picker-add-external" type="button" data-action="new-external-record">${icon('plus')}外部トレーナーの個体を追加</button>`:''}${tools}<div class="picker-result-meta"><span id="picker-count" role="status" aria-live="polite"></span>${grouped?'':'<button class="btn ghost small" type="button" data-action="reset-picker">条件をクリア</button>'}</div></div><div id="picker-results" class="picker-results" ${historyPicker?`role="tabpanel" aria-labelledby="history-picker-tab-${picker.historyTab}"`:''}></div><div id="picker-more" class="picker-more"></div><div class="picker-footer">${historyPicker?'<button class="btn history-picker-clear" type="button" data-action="clear-history-target">すべてを表示</button>':picker.allowAll?'<button class="btn" type="button" data-action="choose-individual" data-id="">すべての個体</button>':`<span class="picker-note">${picker.excluded?'同じ個体同士の対戦は選べません':'写真・名前をタップして選択'}</span>`}<button class="btn" type="button" data-action="close-picker">戻る</button></div>`;
     renderPickerResults();$('picker-title').focus({preventScroll:true});
   }
@@ -2028,7 +2144,7 @@ dialog { overflow-x:hidden; }
     if(!picker||!$('picker-results'))return;
     if(picker.target==='filter-individual'&&picker.historyTab!=='individual'){renderHistoryGroupResults();return;}
     $('picker-results').className='picker-results';
-    const matches=C.queryIndividuals(state.records,picker),nameCounts=new Map();
+    const matches=C.queryIndividuals(state.records,{...picker,sort:individualSortKey(picker.sort,picker.order)}),nameCounts=new Map();
     for(const r of state.records)nameCounts.set(label(r),(nameCounts.get(label(r))||0)+1);
     $('picker-count').textContent=`${matches.length} / ${state.records.length}個体`;
     $('picker-results').innerHTML=matches.length?matches.slice(0,picker.limit).map(r=>{
@@ -2048,10 +2164,10 @@ dialog { overflow-x:hidden; }
     if(picker.target==='filter-individual'){
       if(!id){chooseHistoryTarget('all');return;}
       if(picker.historyTab!=='individual')return;
-      Object.assign(pickerPreferences,{species:picker.species,status:picker.status,sort:picker.sort});
+      Object.assign(pickerPreferences,{species:picker.species,status:picker.status,sort:picker.sort,order:picker.order});
       chooseHistoryTarget('individual',id);return;
     }
-    const target=picker.target;Object.assign(pickerPreferences,{species:picker.species,status:picker.status,sort:picker.sort});
+    const target=picker.target;Object.assign(pickerPreferences,{species:picker.species,status:picker.status,sort:picker.sort,order:picker.order});
     closePicker();
     if(target==='match-winner'||target==='match-loser'){if($(target)){$(target).value=id;updateMatchPreview();}return;}
     if(target==='analysis-individual')ui.analysisId=id;
@@ -2209,6 +2325,8 @@ dialog { overflow-x:hidden; }
     else if(a==='reset-roster-filters'){ui.rosterSearch='';ui.rosterSpecies='';ui.rosterStatus='';render();$('roster-search')?.focus({preventScroll:true});}
     else if(a==='toggle-history-order'){ui.historyOrder=ui.historyOrder==='oldest'?'newest':'oldest';ui.page=1;render();$('history-order-button')?.focus({preventScroll:true});}
     else if(a==='toggle-profile-history-order')toggleProfileHistoryOrder(button);
+    else if(a==='toggle-ranking-order')toggleRankingOrder(button);
+    else if(a==='toggle-individual-order')toggleIndividualOrder(button);
     else if(a==='prev-page'){ui.page--;render();}
     else if(a==='next-page'){ui.page++;render();}
     else if(a==='reload-state')await reloadState();
@@ -2237,6 +2355,10 @@ dialog { overflow-x:hidden; }
       else if(id==='filter-method'){ui.method=v;ui.page=1;}
       else if(id==='filter-result'){ui.result=hasHistoryTarget()&&['win','loss'].includes(v)?v:'all';ui.page=1;}
       else if(id==='filter-period'){ui.period=v;ui.page=1;}
+      else if(id==='ranking-sort')ui.rankingSort=v;
+      else if(id==='ranking-period')ui.rankingPeriod=v;
+      else if(id==='ranking-species')ui.rankingSpecies=v;
+      else if(id==='ranking-status')ui.rankingStatus=v;
       else if(id==='roster-status')ui.rosterStatus=v;
       else if(id==='roster-species')ui.rosterSpecies=v;
       else if(id==='roster-sort')ui.rosterSort=v;
