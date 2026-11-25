@@ -183,12 +183,29 @@ body.dialog-open{overflow:hidden}dialog{color:var(--ink);border:1px solid #e0e7d
 .dense-person.winner,.dense-person.left { grid-area:winner; }
 .dense-person.loser,.dense-person.right { grid-area:loser; }
 .dense-person>.avatar { width:28px; height:28px; border-radius:7px; }
-.dense-person-name,.dense-name,.dense-person>strong,.dense-person>span:not(.avatar):not(.badge) {
-  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
-  min-width:0; overflow:hidden; overflow-wrap:anywhere; font-size:.875rem;
+.dense-person-name,.dense-name,.dense-person>strong {
+  display:block; flex:1; min-width:0; overflow:visible; overflow-wrap:anywhere;
+  white-space:normal; word-break:normal; font-size:.875rem;
   font-weight:650; line-height:1.4;
 }
 .dense-person>.badge { padding:1px 3px; font-size:.75rem; }
+/* Subtle result backgrounds distinguish wins and losses without colored outlines. */
+.result-frame { background:var(--result-fill); border:0; border-radius:8px; }
+.result-frame.is-win { --result-fill:#e3f1d6; }
+.result-frame.is-loss { --result-fill:#f7d7d1; }
+.dense-person.result-frame { padding:4px; align-self:stretch; min-width:0; }
+.dense-person.result-frame>.avatar { flex-shrink:0; }
+.dense-person.result-frame>.dense-person-name { flex:1; min-width:0; white-space:normal; overflow-wrap:anywhere; overflow:visible; text-overflow:clip; -webkit-line-clamp:unset; }
+.result-legend-pair { display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.result-legend-item { display:inline-flex; align-items:center; padding:1px 7px; white-space:nowrap; font-weight:650; line-height:1.5; border:0; border-radius:5px; }
+.result-legend-item.is-win { color:#315e25; }
+.result-legend-item.is-loss { color:#963e31; }
+.result-legend-note { color:#7a8778; }
+.match-detail-people .result-frame { padding:8px; align-self:stretch; min-width:0; }
+.match-detail-people .result-frame .person { width:100%; min-width:0; }
+.match-detail-people .result-frame .person-name { white-space:normal; overflow-wrap:anywhere; overflow:visible; text-overflow:clip; }
+.profile-record-row .record-info { overflow-wrap:anywhere; }
+.profile-record-row.result-frame { border:0; border-radius:8px; padding:8px; margin-bottom:6px; }
 .dense-vs { grid-area:vs; color:#94a286; font-size:.75rem; line-height:1.4; text-align:center; }
 .dense-method { grid-area:method; min-width:0; }
 .dense-method .method-pill { max-width:100%; font-size:.8125rem; line-height:1.4; padding:4px 7px; }
@@ -322,7 +339,7 @@ dialog { overflow-x:hidden; }
   }
   .dense-person { gap:7px; align-items:center; }
   .dense-person>.avatar { width:27px; height:27px; border-radius:7px; }
-  .dense-person-name,.dense-name,.dense-person>strong,.dense-person>span:not(.avatar):not(.badge) { font-size:.875rem; line-height:1.35; }
+  .dense-person-name,.dense-name,.dense-person>strong { font-size:.875rem; line-height:1.35; }
   .dense-date { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px; font-size:.75rem; }
   .dense-date small { display:inline; font-size:.75rem; }
   .dense-vs { font-size:.75rem; }
@@ -913,6 +930,78 @@ dialog { overflow-x:hidden; }
   .method-detail-history .dense-match.has-method-note {
     grid-template-areas:'winner vs loser more' 'meta meta method method' 'note note note note';
   }
+}
+
+/* Compact history controls leave more space for individual cards. */
+#individual-picker.history-selection-picker .picker-header {
+  align-items:center; gap:8px; padding:10px 13px;
+}
+.history-selection-picker .picker-header .eyebrow { display:none; }
+.history-selection-picker .picker-header h2 { font-size:1.05rem; line-height:1.4; }
+.history-selection-picker .picker-header p:not(.eyebrow) {
+  margin-top:2px; font-size:.75rem; line-height:1.5;
+}
+.history-selection-picker .picker-tools { padding:5px 13px 4px; }
+.history-selection-picker .history-picker-tabs {
+  gap:3px; margin-bottom:4px; padding:2px;
+}
+.history-selection-picker .history-picker-tabs>button {
+  min-height:28px; padding:4px 3px; font-size:.75rem; line-height:1.4;
+}
+.history-selection-picker .picker-search { margin-bottom:4px; }
+.history-selection-picker .picker-tools .control {
+  min-height:32px; padding:4px 8px; font-size:.8125rem; line-height:1.4;
+}
+.history-selection-picker .picker-search>.control {
+  padding-left:28px; font-size:1rem; line-height:1.25;
+}
+.history-selection-picker .picker-search>.control::placeholder { font-size:.8125rem; }
+.history-selection-picker .picker-search>.icon { left:9px; top:9px; width:14px; height:14px; }
+.history-selection-picker .picker-tools select.control {
+  padding:5px 20px 5px 7px; background-position:right 5px center; background-size:12px;
+}
+.history-selection-picker .picker-tools select.control:focus {
+  font-size:1rem; line-height:1.25;
+}
+.history-selection-picker .picker-filter-row {
+  grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px;
+}
+.history-selection-picker .picker-result-meta {
+  display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:4px;
+  min-height:26px; padding:2px 0 0; font-size:.6875rem;
+}
+.history-selection-picker #picker-count { min-width:0; white-space:nowrap; }
+.history-selection-picker .picker-result-meta .btn {
+  min-height:26px; padding:3px 5px; font-size:.6875rem; line-height:1.4;
+}
+.history-selection-picker .picker-result-meta .individual-order-button {
+  width:auto; gap:3px; border-color:#476145; background:#203b2a; color:#e9f3df;
+}
+.history-selection-picker .picker-result-meta .individual-order-button:hover {
+  background:#294734;
+}
+.history-selection-picker .picker-result-meta .individual-order-button .icon {
+  width:12px; height:12px;
+}
+.history-selection-picker .picker-results { padding:0 13px 10px; gap:7px; }
+.history-selection-picker .picker-card-name {
+  display:block; -webkit-line-clamp:unset; overflow:visible;
+}
+.history-selection-picker .picker-more:empty { display:none; }
+.history-selection-picker .picker-footer {
+  gap:8px; padding:8px 13px calc(8px + env(safe-area-inset-bottom));
+}
+.history-selection-picker .picker-footer .btn {
+  min-height:34px; padding:6px 10px; font-size:.8125rem;
+}
+@media (max-height:600px) {
+  #individual-picker.history-selection-picker .picker-header { padding-top:8px; padding-bottom:8px; }
+  .history-selection-picker .picker-header p { display:none; }
+}
+@media (max-height:420px) {
+  #individual-picker.history-selection-picker { overflow-y:auto; }
+  .history-selection-picker .picker-tools { position:static; }
+  .history-selection-picker .picker-results { flex:none; overflow:visible; }
 }
 </style>
 </head>
@@ -1729,6 +1818,8 @@ dialog { overflow-x:hidden; }
     shield:'<path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6l9-4Z"/><path d="m8 12 3 3 5-6"/>'
   };
   const icon = (name, extra='') => `<svg class="icon ${extra}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.beetle}</svg>`;
+  const resultFrameClass = role => 'result-frame '+(role==='winner'?'is-win':'is-loss');
+  const resultRoleLegend = (focused=false) => `<span class="result-legend-pair"><span class="result-legend-item result-frame is-win">勝者</span><span class="result-legend-item result-frame is-loss">敗者</span></span>${focused?'<small class="result-legend-note">選んだ個体を左に表示</small>':''}`;
   const methodIcons = ['push','back','lift','spirit','tko'];
   // The existing comparators are reused; only the UI splits item and direction.
   const individualSortGroups = [
@@ -2001,9 +2092,9 @@ dialog { overflow-x:hidden; }
     const breakdown=C.methodBreakdown(state,individualId,matches);
     return `<div class="outcome-breakdowns">${[['win','勝ち方の内訳',breakdown.wins,breakdown.winMethods,'勝'],['loss','相手の勝ち方',breakdown.losses,breakdown.lossMethods,'勝']].map(([outcome,title,total,methods,unit])=>`<section class="outcome-section ${outcome}"><div class="outcome-heading"><h3>${title}</h3><span class="outcome-total">${nf(total)}${unit}</span></div><div class="outcome-methods">${C.METHODS.map((method,i)=>`<button type="button" class="outcome-method method-${i}" data-action="method-detail" data-id="${esc(individualId)}" data-outcome="${outcome}" data-method="${i}" data-scope="${scope}" aria-label="${esc(label(recordMap.get(individualId))+'の'+title+'、'+method+'、'+methods[method].count+unit+'。相手を見る')}"><span class="method-symbol">${icon(methodIcons[i])}</span><span class="outcome-method-name">${esc(method)}</span><strong>${nf(methods[method].count)}</strong><span class="bar-track" aria-hidden="true"><span class="bar-fill" style="display:block;width:${total?methods[method].count/total*100:0}%"></span></span></button>`).join('')}</div></section>`).join('')}</div>`;
   }
-  function showMethodDetail(individualId,outcome,methodIndex,scope='all'){
+  function showMethodDetail(individualId,outcome,methodIndex,scope='all',profileReturn=null){
     if(!recordMap.has(individualId)||!['win','loss'].includes(outcome)||!C.METHODS[methodIndex])return;
-    methodDetail={individualId,outcome,method:C.METHODS[methodIndex],scope,opponentId:'',limit:50};
+    methodDetail={individualId,outcome,method:C.METHODS[methodIndex],scope,opponentId:'',limit:50,profileReturn};
     renderMethodDetail();
   }
   function renderMethodDetail(){
@@ -2014,14 +2105,18 @@ dialog { overflow-x:hidden; }
     const entry=(outcome==='win'?breakdown.winMethods:breakdown.lossMethods)[method];
     const unit='試合',phrase=outcome==='win'?'この個体が勝った相手':'この個体に勝った相手';
     const visible=opponentId?entry.matches.filter(m=>(outcome==='win'?m.loserId:m.winnerId)===opponentId):entry.matches;
-    openDialog(`${dialogHeader(`${esc(method)}で${outcome==='win'?'勝利した対戦':'相手が勝利した対戦'}`,`${esc(label(r))}の${outcome==='win'?'勝ち方':'相手の勝ち方'} · ${scope==='period'?periodLabel():'全期間'}`)}<div class="dialog-body"><div class="method-detail-summary">${avatar(r,'large')}<div><h3>${esc(label(r))}</h3><p>${methodPill(method)} <strong>${entry.count}${unit}</strong> · ${entry.opponents.length}個体</p></div></div><section class="profile-section"><div class="section-heading"><h3>${phrase}</h3>${opponentId?'<button class="btn ghost small" data-action="method-opponent" data-id="">すべての相手</button>':''}</div>${entry.opponents.length?`<div class="method-opponents">${entry.opponents.map(o=>`<button type="button" class="method-opponent ${opponentId===o.id?'selected':''}" data-action="method-opponent" data-id="${esc(o.id)}" aria-pressed="${opponentId===o.id}">${avatar(recordMap.get(o.id))}<span class="individual-select-copy"><strong>${esc(label(recordMap.get(o.id)))}</strong><small>${esc(recordMap.get(o.id)?.species)}</small></span><strong>${o.count}${unit}</strong></button>`).join('')}</div><p class="panel-subtitle">相手をタップすると、その個体との試合に絞れます。</p>`:`<div class="empty-breakdown">${esc(label(r))}${outcome==='win'?'が勝利した':'に対して相手が勝利した'}「${esc(method)}」の試合は、${scope==='period'?periodLabel():'全期間'}にはまだありません。</div>`}</section><section class="profile-section"><h3>${opponentId?esc(label(recordMap.get(opponentId)))+'との':'該当する'}対戦履歴 <span class="count-badge">${visible.length}</span></h3>${visible.length?`<div class="dense-legend"><span><b class="win-mark">左：勝者</b> ／ <b class="lose-mark">右：敗者</b></span><span>新しい順</span></div><div class="method-detail-history dense-history">${renderDenseMatches(visible.slice(0,limit),true)}</div>${visible.length>limit?`<button class="btn full" data-action="method-more">次の50試合を表示（残り${visible.length-limit}試合）</button>`:''}`:'<p class="small-empty">該当する対戦記録はありません。</p>'}</section></div><div class="dialog-footer"><button class="btn" data-action="close-dialog">閉じる</button><button class="btn primary" data-action="profile" data-id="${esc(individualId)}">この個体の全戦績</button></div>`,'wide-dialog');
+    openDialog(`${dialogHeader(`${esc(method)}で${outcome==='win'?'勝利した対戦':'相手が勝利した対戦'}`,`${esc(label(r))}の${outcome==='win'?'勝ち方':'相手の勝ち方'} · ${scope==='period'?periodLabel():'全期間'}`)}<div class="dialog-body"><div class="method-detail-summary">${avatar(r,'large')}<div><h3>${esc(label(r))}</h3><p>${methodPill(method)} <strong>${entry.count}${unit}</strong> · ${entry.opponents.length}個体</p></div></div><section class="profile-section"><h3>${opponentId?esc(label(recordMap.get(opponentId)))+'との':'該当する'}対戦履歴 <span class="count-badge">${visible.length}</span></h3>${visible.length?`<div class="dense-legend"><span class="history-legend-copy">${resultRoleLegend(false)}</span><span>新しい順</span></div><div class="method-detail-history dense-history">${renderDenseMatches(visible.slice(0,limit),true)}</div>${visible.length>limit?`<button class="btn full" data-action="method-more">次の50試合を表示（残り${visible.length-limit}試合）</button>`:''}`:'<p class="small-empty">該当する対戦記録はありません。</p>'}</section><section class="profile-section"><div class="section-heading"><h3>${phrase}</h3>${opponentId?'<button class="btn ghost small" data-action="method-opponent" data-id="">すべての相手</button>':''}</div>${entry.opponents.length?`<div class="method-opponents">${entry.opponents.map(o=>`<button type="button" class="method-opponent ${opponentId===o.id?'selected':''}" data-action="method-opponent" data-id="${esc(o.id)}" aria-pressed="${opponentId===o.id}">${avatar(recordMap.get(o.id))}<span class="individual-select-copy"><strong>${esc(label(recordMap.get(o.id)))}</strong><small>${esc(recordMap.get(o.id)?.species)}</small></span><strong>${o.count}${unit}</strong></button>`).join('')}</div><p class="panel-subtitle">相手をタップすると、その個体との試合に絞れます。</p>`:`<div class="empty-breakdown">${esc(label(r))}${outcome==='win'?'が勝利した':'に対して相手が勝利した'}「${esc(method)}」の試合は、${scope==='period'?periodLabel():'全期間'}にはまだありません。</div>`}</section></div><div class="dialog-footer"><button class="btn" data-action="close-dialog">戻る</button><button class="btn primary" data-action="profile" data-id="${esc(individualId)}">この個体の全戦績</button></div>`,'wide-dialog');
+    if(methodDetail.profileReturn){
+      const saved=methodDetail.profileReturn;
+      setDialogBack(()=>returnToProfile(saved),'個体の戦績に戻る');
+    }
   }
   function renderHistory(matches){
     if(!state.records.length)return `<div class="empty-state"><div class="empty-illustration" aria-hidden="true"><span class="empty-card">${icon('beetle')}</span><span class="empty-card second">${icon('file')}</span></div><h3>個体情報を読み込んで始めましょう</h3><p>元アプリで出力した個体情報JSONを読み込むと、<br>対戦を記録できます。</p><button class="btn primary" type="button" data-action="import-individuals">${icon('upload')}個体情報を読み込む</button><span class="empty-note">戦績を引き継ぐ場合は、バックアップメニューから読み込めます。</span></div>`;
     if(!matches.length)return `<div class="empty-state">${!state.matches.length?`<div class="empty-illustration" aria-hidden="true"><span class="empty-card">${icon('beetle')}</span><span class="empty-card second">${icon('beetle')}</span><span class="empty-vs">VS</span></div><h3>最初の1戦を、ここに。</h3><p>個体データは準備できています。<br>勝者・敗者・勝ち方を選んで記録しましょう。</p><button class="btn primary" data-action="new-match">${icon('plus')}対戦を記録する</button><span class="empty-note">実際の対戦記録はまだありません</span>`:`${icon('search')}<h3 style="margin-top:18px">条件に合う対戦がありません</h3><p>個体・勝ち方・期間の条件を変更してください。</p><button class="btn" data-action="reset-filters">絞り込みを解除</button>`}</div>`;
     const pageSize=10,pageCount=Math.ceil(matches.length/pageSize);ui.page=Math.max(1,Math.min(ui.page,pageCount));const visible=matches.slice((ui.page-1)*pageSize,ui.page*pageSize);
     const focalId=ui.historyMode==='individual'&&recordMap.has(ui.individual)?ui.individual:'';
-    const legend=focalId?'<span class="history-subject-label"><b>左：選んだ個体</b> ／ <b>右：対戦相手</b></span>':'<span><b class="win-mark">左：勝者</b> ／ <b class="lose-mark">右：敗者</b></span>';
+    const legend=resultRoleLegend(!!focalId);
     return `<div class="dense-legend history-legend"><span class="history-legend-copy">${legend}<small>行をタップで詳細・編集</small></span>${historySortButton('history',ui.historyOrder)}</div><div class="dense-history">${renderDenseMatches(visible,false,focalId)}</div>
       <div class="history-bottom"><span>${nf((ui.page-1)*pageSize+1)}–${nf(Math.min(ui.page*pageSize,matches.length))} / ${nf(matches.length)}試合</span>${pageCount>1?`<div class="pager"><button class="btn" data-action="prev-page" ${ui.page===1?'disabled':''}>前へ</button><span>${ui.page} / ${pageCount}</span><button class="btn" data-action="next-page" ${ui.page===pageCount?'disabled':''}>次へ</button></div>`:`<span>${orderLabel(ui.historyOrder)}に表示</span>`}</div>`;
   }
@@ -2032,15 +2127,24 @@ dialog { overflow-x:hidden; }
       const leftId=focused?focalId:m.winnerId,rightId=focused?(won?m.loserId:m.winnerId):m.loserId;
       const left=recordMap.get(leftId),right=recordMap.get(rightId);
       const time=`<time class="dense-date" datetime="${esc(m.date)}">${displayDay(m.date)}</time>`;
-      const meta=focused?`<span class="dense-meta">${time}<span class="dense-result ${won?'win':'loss'}">${won?'勝利':'敗北'}</span></span>`:time;
-      const description=focused?`${displayDay(m.date)}、${label(left)}、${label(right)}との対戦に${won?'勝利':'敗北'}、${m.method}。詳細を表示`:`${displayDay(m.date)}、勝者 ${label(left)}、敗者 ${label(right)}、${m.method}。詳細を表示`;
+      const meta=time;
+      const description=focused?`${displayDay(m.date)}、${label(left)}、${label(right)}との対戦に${won?'勝利':'敗北'}、${m.method}。詳細を表示`:`${displayDay(m.date)}、勝者 ${label(recordMap.get(m.winnerId))}、敗者 ${label(recordMap.get(m.loserId))}、${m.method}。詳細を表示`;
       const note=fromMethod&&typeof m.notes==='string'&&m.notes.trim()?m.notes:'';
-      return `<button type="button" class="dense-match${focused?' subject-focused':''}${note?' has-method-note':''}" data-action="match-detail" data-id="${esc(m.id)}" ${fromMethod?'data-from-method="true"':''} aria-label="${esc(description+(note?'。メモ：'+note:''))}">${meta}<span class="dense-person left">${avatar(left)}<strong>${esc(label(left))}</strong></span><span class="dense-vs" aria-hidden="true">VS</span><span class="dense-person right">${avatar(right)}<strong>${esc(label(right))}</strong></span><span class="dense-method">${methodPill(m.method)}</span><span class="dense-open" aria-hidden="true">···</span>${note?`<span class="dense-match-note"><span class="dense-note-label">メモ：</span><span class="dense-note-text">${esc(note)}</span></span>`:''}</button>`;
+      const leftRole=leftId===m.winnerId?'winner':'loser';
+      const rightRole=rightId===m.winnerId?'winner':'loser';
+      return `<button type="button" class="dense-match${focused?' subject-focused':''}${note?' has-method-note':''}" data-action="match-detail" data-id="${esc(m.id)}" ${fromMethod?'data-from-method="true"':''} aria-label="${esc(description+(note?'。メモ：'+note:''))}">${meta}<span class="dense-person left ${resultFrameClass(leftRole)}" title="${leftRole==='winner'?'勝者':'敗者'}">${avatar(left)}<strong class="dense-person-name">${esc(label(left))}</strong></span><span class="dense-vs" aria-hidden="true">VS</span><span class="dense-person right ${resultFrameClass(rightRole)}" title="${rightRole==='winner'?'勝者':'敗者'}">${avatar(right)}<strong class="dense-person-name">${esc(label(right))}</strong></span><span class="dense-method">${methodPill(m.method)}</span><span class="dense-open" aria-hidden="true">···</span>${note?`<span class="dense-match-note"><span class="dense-note-label">メモ：</span><span class="dense-note-text">${esc(note)}</span></span>`:''}</button>`;
     }).join('');
   }
   function showMatchDetail(id,fromMethod=false){
     const m=state.matches.find(x=>x.id===id);if(!m)return;
-    openDialog(`${dialogHeader('対戦の詳細',displayDay(m.date))}<div class="dialog-body"><div class="match-detail-people"><div><span class="field-label win-mark">勝者</span>${person(recordMap.get(m.winnerId))}</div><span class="muted">VS</span><div><span class="field-label lose-mark">敗者</span>${person(recordMap.get(m.loserId))}</div></div><div class="match-detail-meta"><span>決まり手</span>${methodPill(m.method)}</div><p class="form-preview"><strong>${esc(label(recordMap.get(m.winnerId)))}</strong> が <strong>${esc(label(recordMap.get(m.loserId)))}</strong> に「${esc(m.method)}」で勝利</p>${m.notes?`<div class="match-detail-note"><h3>メモ</h3><p>${esc(m.notes)}</p></div>`:''}</div><div class="dialog-footer">${fromMethod&&methodDetail?'<button class="btn" data-action="return-method">内訳に戻る</button>':'<button class="btn" data-action="close-dialog">閉じる</button>'}<button class="btn ghost" data-action="delete-match" data-id="${esc(m.id)}">${icon('trash')}削除</button><button class="btn primary" data-action="edit-match" data-id="${esc(m.id)}">${icon('edit')}編集</button></div>`);
+    const methodReturn=fromMethod&&methodDetail?{detail:methodDetail,scrollTop:$('active-dialog')?.scrollTop||0}:null;
+    openDialog(`${dialogHeader('対戦の詳細',displayDay(m.date))}<div class="dialog-body"><div class="match-detail-people"><div class="result-frame is-win"><span class="field-label win-mark">勝者</span>${person(recordMap.get(m.winnerId))}</div><span class="muted">VS</span><div class="result-frame is-loss"><span class="field-label lose-mark">敗者</span>${person(recordMap.get(m.loserId))}</div></div><div class="match-detail-meta"><span>決まり手</span>${methodPill(m.method)}</div><p class="form-preview"><strong>${esc(label(recordMap.get(m.winnerId)))}</strong> が <strong>${esc(label(recordMap.get(m.loserId)))}</strong> に「${esc(m.method)}」で勝利</p>${m.notes?`<div class="match-detail-note"><h3>メモ</h3><p>${esc(m.notes)}</p></div>`:''}</div><div class="dialog-footer">${methodReturn?'<button class="btn" data-action="close-dialog">戻る</button>':'<button class="btn" data-action="close-dialog">閉じる</button>'}<button class="btn ghost" data-action="delete-match" data-id="${esc(m.id)}">${icon('trash')}削除</button><button class="btn primary" data-action="edit-match" data-id="${esc(m.id)}">${icon('edit')}編集</button></div>`);
+    if(methodReturn)setDialogBack(()=>{
+      methodDetail=methodReturn.detail;
+      renderMethodDetail();
+      const dialog=$('active-dialog');
+      if(dialog){[...dialog.querySelectorAll('.dense-match')].find(row=>row.dataset.id===id)?.focus({preventScroll:true});dialog.scrollTop=methodReturn.scrollTop;}
+    },'決まり手別の対戦履歴に戻る');
   }
   function matchActions(m){return `<div class="history-actions"><button class="icon-button" data-action="edit-match" data-id="${esc(m.id)}" aria-label="${esc(displayDay(m.date)+' '+label(recordMap.get(m.winnerId))+' 対 '+label(recordMap.get(m.loserId))+' の戦績を編集')}" title="編集">${icon('edit')}</button><button class="icon-button" data-action="delete-match" data-id="${esc(m.id)}" aria-label="${esc(displayDay(m.date)+' '+label(recordMap.get(m.winnerId))+' 対 '+label(recordMap.get(m.loserId))+' の戦績を削除')}" title="削除">${icon('trash')}</button></div>`;}
   function renderMatrix(){
@@ -2112,9 +2216,11 @@ dialog { overflow-x:hidden; }
     const species=[...new Set(state.records.map(r=>r.species))].sort((a,b)=>a.localeCompare(b,'ja'));
     if(picker.species&&!species.includes(picker.species))picker.species='';
     const historyPicker=picker.target==='filter-individual',grouped=historyPicker&&picker.historyTab!=='individual';
+    $('individual-picker').classList.toggle('history-selection-picker',historyPicker);
     const tabs=historyPicker?`<div class="history-picker-tabs" role="tablist" aria-label="履歴の対象を選ぶ方法">${[['individual','個体ごと'],['species','種類ごと'],['status','状態ごと']].map(([mode,title])=>`<button id="history-picker-tab-${mode}" type="button" role="tab" aria-selected="${picker.historyTab===mode}" aria-controls="picker-results" tabindex="${picker.historyTab===mode?'0':'-1'}" data-action="history-picker-tab" data-mode="${mode}">${title}</button>`).join('')}</div>`:'';
-    const tools=grouped?`<p class="history-picker-description">${picker.historyTab==='species'?'種類':'状態'}を選ぶと、その個体群が参加した対戦を表示します。<br>現在の個体情報で分類し、外部個体も含みます。</p>`:`<div class="picker-search search-field">${icon('search')}<input id="picker-search" class="control" type="search" placeholder="名前・種類・トレーナー名・サイズを検索" value="${esc(picker.query)}" aria-label="個体を検索" autocomplete="off" enterkeyhint="search"></div><div class="picker-filter-row"><select id="picker-species" class="control" aria-label="種類で絞り込み"><option value="">すべての種類</option>${species.map(s=>`<option value="${esc(s)}" ${picker.species===s?'selected':''}>${esc(s)}</option>`).join('')}</select><select id="picker-status" class="control" aria-label="状態で絞り込み"><option value="">すべての状態</option>${['現役','休養中','引退','旅立ち'].map(s=>`<option ${picker.status===s?'selected':''}>${s}</option>`).join('')}</select><select id="picker-sort" class="control" aria-label="個体の並べ替え項目">${individualSortOptions(picker.sort,true)}</select>${individualOrderButton('picker',picker.order)}</div>`;
-    $('individual-picker').innerHTML=`<div class="picker-header"><div><p class="eyebrow">BEATMATE · 個体データベース</p><h2 id="picker-title" tabindex="-1">${esc(picker.title)}</h2><p>${historyPicker?'個体・種類・状態から、履歴に表示する対象を選択':'写真・名前・種類から探して、カードをタップ'}</p></div><button class="icon-button" type="button" data-action="close-picker" aria-label="個体選択を閉じる">${icon('close')}</button></div><div class="picker-tools">${tabs}${picker.target.startsWith('match-')?`<button class="btn picker-add-external" type="button" data-action="new-external-record">${icon('plus')}外部トレーナーの個体を追加</button>`:''}${tools}<div class="picker-result-meta"><span id="picker-count" role="status" aria-live="polite"></span>${grouped?'':'<button class="btn ghost small" type="button" data-action="reset-picker">条件をクリア</button>'}</div></div><div id="picker-results" class="picker-results" ${historyPicker?`role="tabpanel" aria-labelledby="history-picker-tab-${picker.historyTab}"`:''}></div><div id="picker-more" class="picker-more"></div><div class="picker-footer">${historyPicker?'<button class="btn history-picker-clear" type="button" data-action="clear-history-target">すべてを表示</button>':picker.allowAll?'<button class="btn" type="button" data-action="choose-individual" data-id="">すべての個体</button>':`<span class="picker-note">${picker.excluded?'同じ個体同士の対戦は選べません':'写真・名前をタップして選択'}</span>`}<button class="btn" type="button" data-action="close-picker">戻る</button></div>`;
+    const tools=grouped?`<p class="history-picker-description">${picker.historyTab==='species'?'種類':'状態'}を選ぶと、その個体群が参加した対戦を表示します。<br>現在の個体情報で分類し、外部個体も含みます。</p>`:`<div class="picker-search search-field">${icon('search')}<input id="picker-search" class="control" type="search" placeholder="名前・種類・トレーナー名・サイズを検索" value="${esc(picker.query)}" aria-label="個体を検索" autocomplete="off" enterkeyhint="search"></div><div class="picker-filter-row"><select id="picker-species" class="control" aria-label="種類で絞り込み"><option value="">${historyPicker?'全種類':'すべての種類'}</option>${species.map(s=>`<option value="${esc(s)}" ${picker.species===s?'selected':''}>${esc(s)}</option>`).join('')}</select><select id="picker-status" class="control" aria-label="状態で絞り込み"><option value="">${historyPicker?'全状態':'すべての状態'}</option>${['現役','休養中','引退','旅立ち'].map(s=>`<option ${picker.status===s?'selected':''}>${s}</option>`).join('')}</select><select id="picker-sort" class="control" aria-label="個体の並べ替え項目">${individualSortOptions(picker.sort,true)}</select>${historyPicker?'':individualOrderButton('picker',picker.order)}</div>`;
+    const pickerActions=grouped?'':`${historyPicker?individualOrderButton('picker',picker.order):''}<button class="btn ghost small" type="button" data-action="reset-picker">条件をクリア</button>`;
+    $('individual-picker').innerHTML=`<div class="picker-header"><div><p class="eyebrow">BEATMATE · 個体データベース</p><h2 id="picker-title" tabindex="-1">${esc(picker.title)}</h2><p>${historyPicker?'個体・種類・状態から選んで表示':'写真・名前・種類から探して、カードをタップ'}</p></div><button class="icon-button" type="button" data-action="close-picker" aria-label="個体選択を閉じる">${icon('close')}</button></div><div class="picker-tools">${tabs}${picker.target.startsWith('match-')?`<button class="btn picker-add-external" type="button" data-action="new-external-record">${icon('plus')}外部トレーナーの個体を追加</button>`:''}${tools}<div class="picker-result-meta"><span id="picker-count" role="status" aria-live="polite"></span>${pickerActions}</div></div><div id="picker-results" class="picker-results" ${historyPicker?`role="tabpanel" aria-labelledby="history-picker-tab-${picker.historyTab}"`:''}></div><div id="picker-more" class="picker-more"></div><div class="picker-footer">${historyPicker?'<button class="btn history-picker-clear" type="button" data-action="clear-history-target">すべてを表示</button>':picker.allowAll?'<button class="btn" type="button" data-action="choose-individual" data-id="">すべての個体</button>':`<span class="picker-note">${picker.excluded?'同じ個体同士の対戦は選べません':'写真・名前をタップして選択'}</span>`}<button class="btn" type="button" data-action="close-picker">戻る</button></div>`;
     renderPickerResults();$('picker-title').focus({preventScroll:true});
   }
   function setHistoryPickerTab(mode){
@@ -2277,13 +2383,22 @@ dialog { overflow-x:hidden; }
     for(const m of matches){const oid=m.winnerId===id?m.loserId:m.winnerId;if(!opponents.has(oid))opponents.set(oid,{wins:0,losses:0,methods:Object.fromEntries(C.METHODS.map(x=>[x,0]))});const o=opponents.get(oid);if(m.winnerId===id){o.wins++;o.methods[m.method]++;}else o.losses++;}
     openDialog(`${dialogHeader('個体の戦績','勝敗・勝ち方・相手別の記録')}<div class="dialog-body"><div class="profile-top">${avatar(r,'xlarge')}<div><h3 class="profile-name">${esc(label(r))}</h3><p class="profile-species">${esc(r.species)}</p>${r.external?`<p class="external-owner">チェッカー専用</p>`:''}<div class="profile-attributes"><span>${esc(fullSize(r))}</span>${statusBadge(r)}<span>強さ ${r.strength??'—'} / 10</span></div></div></div><div class="profile-metrics"><div><strong>${s.wins}</strong><span>勝ち</span></div><div><strong style="color:#b17c69">${s.losses}</strong><span>負け</span></div><div><strong>${s.winRate===null?'—':Math.round(s.winRate)+'%'}</strong><span>勝率 · ${s.total}試合</span></div></div>${renderOutcomeBreakdowns(id,matches,'all')}<details class="profile-disclosure"><summary>相手別の戦績</summary><div class="profile-disclosure-content">${opponents.size?`<div class="opponent-list">${[...opponents].map(([oid,o])=>{const tone=!o.wins&&!o.losses?'unplayed':o.losses===0?'positive':o.wins===0?'negative':o.wins>o.losses?'winning':o.wins<o.losses?'losing':'tied';return `<div class="opponent-row ${tone}">${person(recordMap.get(oid))}<span class="opponent-result">${o.wins}勝 ${o.losses}敗</span><button class="btn ghost small" data-action="pair" data-a="${esc(id)}" data-b="${esc(oid)}">詳細</button></div>`;}).join('')}</div>`:'<div class="no-records">対戦記録はまだありません。</div>'}</div></details><details class="profile-disclosure profile-history-disclosure"><summary>対戦履歴 ${historySortButton('profile-history',ui.profileHistoryOrder,id)}</summary><div id="profile-match-history" class="profile-disclosure-content">${matches.length?renderPersonalHistory(matches,id,ui.profileHistoryOrder):'<p class="small-empty">この個体の最初の対戦を記録しましょう。</p>'}</div></details>${r.notes||r.notes2?`<details class="profile-notes"><summary>${r.external?'個体のメモを見る':'元アプリの備考を見る'}</summary><p style="margin-top:10px">${esc([r.notes,r.notes2].filter(Boolean).join('\n\n'))}</p></details>`:''}${r.external?`<button class="btn small external-edit-button" type="button" data-action="edit-external-record" data-id="${esc(r.id)}">${icon('edit')}外部個体の情報を編集</button>`:''}<p class="muted" style="font-size:.6875rem;margin-top:16px;overflow-wrap:anywhere">個体ID: ${esc(r.id)}</p></div><div class="dialog-footer"><button class="btn" data-action="close-dialog">閉じる</button><button class="btn primary" data-action="new-match" data-winner="${esc(id)}">${icon('plus')}この個体の対戦を記録</button></div>`,'wide-dialog');
   }
-  function renderPersonalHistory(matches,id,order='newest'){return ordered(matches,order).slice(0,100).map(m=>{const win=m.winnerId===id,opponent=recordMap.get(win?m.loserId:m.winnerId);return `<div class="profile-record-row"><span class="result-label ${win?'win-mark':'lose-mark'}">${win?'勝ち':'負け'}</span><div class="record-info"><strong>${esc(label(opponent))}</strong> ${win?'に勝利':'が勝利'}<small>${displayDay(m.date)}${m.notes?' · '+esc(m.notes):''}</small></div>${methodPill(m.method)}<button class="icon-button" data-action="edit-match" data-id="${esc(m.id)}" aria-label="${esc(displayDay(m.date)+'の戦績を編集')}">${icon('edit')}</button></div>`;}).join('')+(matches.length>100?`<p class="small-empty">${orderLabel(order)}に100試合を表示。全件は戦績一覧から個体を絞り込んで確認できます。</p>`:'');}
+  function renderPersonalHistory(matches,id,order='newest'){return ordered(matches,order).slice(0,100).map(m=>{const win=m.winnerId===id,opponent=recordMap.get(win?m.loserId:m.winnerId);return `<div class="profile-record-row ${resultFrameClass(win?'winner':'loser')}" aria-label="${win?'勝利':'敗北'}"><div class="record-info"><strong>${esc(label(opponent))}</strong> ${win?'に勝利':'が勝利'}<small>${displayDay(m.date)}${m.notes?' · '+esc(m.notes):''}</small></div>${methodPill(m.method)}<button class="icon-button" data-action="edit-match" data-id="${esc(m.id)}" aria-label="${esc(displayDay(m.date)+'の戦績を編集')}">${icon('edit')}</button></div>`;}).join('')+(matches.length>100?`<p class="small-empty">${orderLabel(order)}に100試合を表示。全件は戦績一覧から個体を絞り込んで確認できます。</p>`:'');}
   // Return from a profile's opponent detail without losing its disclosure or scroll state.
   function captureProfileReturn(button){
     const dialog=$('active-dialog');
-    if(!dialog?.open||!button.closest('.opponent-row')||!dialog.querySelector('.profile-top'))return null;
-    return {id:button.dataset.a,opponentId:button.dataset.b,scrollTop:dialog.scrollTop,
-      openSections:[...dialog.querySelectorAll('details')].map(section=>section.open),returnFocus:dialogReturnFocus};
+    if(!dialog?.open||!dialog.querySelector('.profile-top'))return null;
+    const isPair=button.dataset.action==='pair'&&!!button.closest('.opponent-row');
+    const isMethod=button.dataset.action==='method-detail'&&!!button.closest('.outcome-breakdowns');
+    if(!isPair&&!isMethod)return null;
+    return {id:isPair?button.dataset.a:button.dataset.id,opponentId:isPair?button.dataset.b:null,
+      outcome:isMethod?button.dataset.outcome:null,method:isMethod?button.dataset.method:null,
+      scrollTop:dialog.scrollTop,openSections:[...dialog.querySelectorAll('details')].map(section=>section.open),returnFocus:dialogReturnFocus};
+  }
+  function setDialogBack(back,label){
+    dialogBackAction=back;
+    const closeButton=$('active-dialog')?.querySelector('.dialog-header [data-action="close-dialog"]');
+    closeButton?.setAttribute('aria-label',label);closeButton?.setAttribute('title',label);
   }
   function returnToProfile(saved){
     if(!recordMap.has(saved.id)){closeDialog();return;}
@@ -2292,7 +2407,9 @@ dialog { overflow-x:hidden; }
     if(!dialog?.open)return;
     dialogReturnFocus=saved.returnFocus;
     [...dialog.querySelectorAll('details')].forEach((section,i)=>{section.open=!!saved.openSections[i];});
-    const previousButton=[...dialog.querySelectorAll('.opponent-row [data-action="pair"]')].find(button=>button.dataset.b===saved.opponentId);
+    const previousButton=saved.outcome
+      ? [...dialog.querySelectorAll('[data-action="method-detail"]')].find(button=>button.dataset.outcome===saved.outcome&&button.dataset.method===saved.method)
+      : [...dialog.querySelectorAll('.opponent-row [data-action="pair"]')].find(button=>button.dataset.b===saved.opponentId);
     previousButton?.focus({preventScroll:true});
     dialog.scrollTop=saved.scrollTop;
   }
@@ -2373,10 +2490,10 @@ dialog { overflow-x:hidden; }
     else if(a==='reset-picker')resetPicker();
     else if(a==='picker-more'&&picker){picker.limit+=40;renderPickerResults();}
     else if(a==='match-detail')showMatchDetail(id,button.dataset.fromMethod==='true');
-    else if(a==='method-detail')showMethodDetail(id,button.dataset.outcome,Number(button.dataset.method),button.dataset.scope);
+    else if(a==='method-detail')showMethodDetail(id,button.dataset.outcome,Number(button.dataset.method),button.dataset.scope,captureProfileReturn(button));
     else if(a==='method-opponent'&&methodDetail){methodDetail.opponentId=id;methodDetail.limit=50;renderMethodDetail();}
     else if(a==='method-more'&&methodDetail){methodDetail.limit+=50;renderMethodDetail();}
-    else if(a==='return-method')renderMethodDetail();
+    else if(a==='return-method')closeDialog();
     else if(a==='close-dialog')closeDialog();
     else if(a==='profile')showProfile(id);
     else if(a==='pair')showPair(button.dataset.a,button.dataset.b,captureProfileReturn(button));
