@@ -1003,6 +1003,20 @@ dialog { overflow-x:hidden; }
   .history-selection-picker .picker-tools { position:static; }
   .history-selection-picker .picker-results { flex:none; overflow:visible; }
 }
+
+/* Footer file actions follow the original individual database layout. */
+.page-footer.data-footer{display:block;margin-top:26px;padding:20px 2px 14px;border-top:1px solid #dce5d4;font-size:.75rem;line-height:1.8;color:#74816b;}
+.data-footer .footer-maker{display:block;font-size:.8125rem;font-weight:700;color:#536c46;margin-bottom:5px;}
+.data-footer .footer-note p+p{margin-top:3px;}
+.data-footer .footer-file-actions{position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:13px;}
+.data-footer .footer-file-actions .btn{display:inline-flex;align-items:center;gap:5px;border:1px solid #d6e1ce;border-radius:9px;background:#fff;padding:7px 12px;min-height:36px;color:#3e5840;font-size:.8125rem;font-weight:650;}
+.data-footer .footer-file-actions .btn:hover{background:#eef5e8;}
+.data-footer .footer-file-actions .btn .icon{width:15px;height:15px;}
+.data-footer .footer-import-menu{position:static;}
+.data-footer .footer-import-menu .backup-menu{top:auto;bottom:calc(100% + 8px);left:0;right:auto;width:min(380px,100%);max-height:calc(100dvh - 110px);}
+.data-footer .backup-menu button{padding:12px 10px;font-size:.8125rem;color:var(--ink);}
+@media(max-width:760px){.page-footer.data-footer{margin-top:20px;padding:16px 0 13px;}.data-footer .footer-file-actions{gap:7px;margin-top:11px;}.mobile-brand .mobile-brand-copy{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;white-space:normal;}}
+
 </style>
 </head>
 <body>
@@ -1975,16 +1989,22 @@ dialog { overflow-x:hidden; }
       <div class="main-area">
         <header class="topbar"><div class="breadcrumb"><span>ビートメイト</span><span class="separator">/</span><b>戦績チェッカー</b></div><div class="mobile-brand"><span class="brand-mark" role="img" aria-label="ビートメイト"></span><span class="mobile-brand-copy"><b>ビートメイト</b><small>戦績チェッカー</small></span></div>
           <div class="topbar-actions"><button class="btn ghost help-top" data-action="help" aria-label="使い方">${icon('help')}<span>使い方</span></button>
-            <div class="menu-container"><button id="export-menu-button" class="btn" data-action="menu" aria-expanded="${ui.menu}" aria-controls="export-menu">${icon('download')}バックアップ${icon('chevron')}</button>
-              ${ui.menu?`<div class="menu-panel backup-menu" id="export-menu"><button data-action="import-individuals">${icon('upload')}<span>クワカブデータベース個体情報のバックアップデータを読み込む<small>元アプリの個体情報を追加・更新</small></span></button><div class="menu-separator"></div><button data-action="export-backup">${icon('download')}<span>戦績チェッカーのバックアップデータを出力する<small>個体情報・外部個体・すべての戦績をJSONで保存</small></span></button><button data-action="import-backup">${icon('upload')}<span>戦績チェッカーのバックアップデータを読み込む<small>保存した個体情報・外部個体・戦績を復元</small></span></button></div>`:''}
-            </div><div class="avatar-letter" title="${esc(name)}">${esc(name.slice(0,1))}</div>
+            <div class="avatar-letter" title="${esc(name)}">${esc(name.slice(0,1))}</div>
           </div>
         </header>
         <main id="main" class="content">
           ${saveError?`<div class="storage-warning" role="alert">${icon('alert')}<span>${esc(saveError)}</span><button class="btn small" data-action="${storageReadFailed&&failedStoredState?'export-recovery':'export-backup'}">バックアップを保存</button></div>`:''}
           ${externalChange?`<div class="storage-warning" role="status">${icon('alert')}<span>別のタブでデータが更新されました。最新の内容を読み込んでください。</span><button class="btn small" data-action="reload-state">最新を読み込む</button></div>`:''}
           ${ui.view==='records'?renderDashboard():ui.view==='matrix'?renderMatrix():renderIndividuals()}
-          <footer class="page-footer"><span>個体JSONを再読み込みしても、記録済みの戦績は保持されます。</span><button data-action="help">BEATMATE · 戦績チェッカー</button></footer>
+          <footer class="page-footer data-footer" aria-label="データの保存と読み込み">
+            <div class="footer-note"><strong class="footer-maker">ビートメイト｜戦績チェッカー</strong><p>データは、このアプリを開いた端末・ブラウザ内に保存されます（端末や開き方によって保存できない場合があります）。「バックアップ」でJSONファイルを別途保管してください。別の端末・ブラウザとの自動同期はありません。</p><p>個体情報のJSONを再読み込みしても、記録済みの戦績は保持されます。</p></div>
+            <div class="footer-file-actions">
+              <button type="button" class="btn small" data-action="export-backup" title="戦績チェッカーのバックアップデータを出力する">${icon('download')}バックアップ</button>
+              <div class="menu-container footer-import-menu"><button type="button" id="export-menu-button" class="btn small" data-action="menu" aria-expanded="${ui.menu}" ${ui.menu?'aria-controls="export-menu"':''}>${icon('upload')}読み込み${icon('chevron')}</button>
+                ${ui.menu?`<div class="menu-panel backup-menu" id="export-menu"><button type="button" data-action="import-individuals">${icon('upload')}<span>クワカブデータベース個体情報のバックアップデータを読み込む<small>元アプリの個体情報を追加・更新</small></span></button><div class="menu-separator"></div><button type="button" data-action="import-backup">${icon('upload')}<span>戦績チェッカーのバックアップデータを読み込む<small>保存した個体情報・外部個体・戦績を読み込む</small></span></button></div>`:''}
+              </div>
+            </div>
+          </footer>
         </main>
       </div>`;
     restoreFocus(focus);
@@ -2112,7 +2132,7 @@ dialog { overflow-x:hidden; }
     }
   }
   function renderHistory(matches){
-    if(!state.records.length)return `<div class="empty-state"><div class="empty-illustration" aria-hidden="true"><span class="empty-card">${icon('beetle')}</span><span class="empty-card second">${icon('file')}</span></div><h3>個体情報を読み込んで始めましょう</h3><p>元アプリで出力した個体情報JSONを読み込むと、<br>対戦を記録できます。</p><button class="btn primary" type="button" data-action="import-individuals">${icon('upload')}個体情報を読み込む</button><span class="empty-note">戦績を引き継ぐ場合は、バックアップメニューから読み込めます。</span></div>`;
+    if(!state.records.length)return `<div class="empty-state"><div class="empty-illustration" aria-hidden="true"><span class="empty-card">${icon('beetle')}</span><span class="empty-card second">${icon('file')}</span></div><h3>個体情報を読み込んで始めましょう</h3><p>元アプリで出力した個体情報JSONを読み込むと、<br>対戦を記録できます。</p><button class="btn primary" type="button" data-action="import-individuals">${icon('upload')}個体情報を読み込む</button><span class="empty-note">戦績を引き継ぐ場合は、画面下部の「読み込み」から選べます。</span></div>`;
     if(!matches.length)return `<div class="empty-state">${!state.matches.length?`<div class="empty-illustration" aria-hidden="true"><span class="empty-card">${icon('beetle')}</span><span class="empty-card second">${icon('beetle')}</span><span class="empty-vs">VS</span></div><h3>最初の1戦を、ここに。</h3><p>個体データは準備できています。<br>勝者・敗者・勝ち方を選んで記録しましょう。</p><button class="btn primary" data-action="new-match">${icon('plus')}対戦を記録する</button><span class="empty-note">実際の対戦記録はまだありません</span>`:`${icon('search')}<h3 style="margin-top:18px">条件に合う対戦がありません</h3><p>個体・勝ち方・期間の条件を変更してください。</p><button class="btn" data-action="reset-filters">絞り込みを解除</button>`}</div>`;
     const pageSize=10,pageCount=Math.ceil(matches.length/pageSize);ui.page=Math.max(1,Math.min(ui.page,pageCount));const visible=matches.slice((ui.page-1)*pageSize,ui.page*pageSize);
     const focalId=ui.historyMode==='individual'&&recordMap.has(ui.individual)?ui.individual:'';
@@ -2372,7 +2392,7 @@ dialog { overflow-x:hidden; }
   }
   async function inspectFile(file){
     if(!file)return;if(!$('import-preview'))showImport(importKind);const request=++importSequence,expectedKind=importKind;pendingImport=null;$('confirm-import').disabled=true;$('confirm-import').textContent='読み込む';$('import-error').textContent='';$('import-preview').innerHTML='<p class="import-detail">ファイルを確認しています…</p>';
-    try{if(file.size>100*1024*1024)throw new Error('100MB以下のJSONファイルを選択してください。');const text=await file.text();if(request!==importSequence||!$('import-preview'))return;const parsed=C.parseImport(text);if(parsed.kind!==expectedKind)throw new Error(expectedKind==='individuals'?'このファイルは戦績チェッカーのバックアップです。バックアップメニューの「戦績チェッカーのバックアップデータを読み込む」から選んでください。':'このファイルは元アプリの個体情報です。バックアップメニューの「クワカブデータベース個体情報のバックアップデータを読み込む」から選んでください。');if(storageReadFailed&&(parsed.kind!=='backup'||!revision))throw new Error('保存データを復旧するには、戦績チェッカーで出力した戦績バックアップJSONが必要です。保存領域自体を読み取れない場合は、保存済みファイルを確保してからブラウザのこのサイトのデータを削除し、バックアップを読み込んでください。');const result=C.mergeImport(state,parsed,file.name);const s=result.summary;pendingImport={parsed,fileName:file.name};
+    try{if(file.size>100*1024*1024)throw new Error('100MB以下のJSONファイルを選択してください。');const text=await file.text();if(request!==importSequence||!$('import-preview'))return;const parsed=C.parseImport(text);if(parsed.kind!==expectedKind)throw new Error(expectedKind==='individuals'?'このファイルは戦績チェッカーのバックアップです。画面下部の「読み込み」の「戦績チェッカーのバックアップデータを読み込む」から選んでください。':'このファイルは元アプリの個体情報です。画面下部の「読み込み」の「クワカブデータベース個体情報のバックアップデータを読み込む」から選んでください。');if(storageReadFailed&&(parsed.kind!=='backup'||!revision))throw new Error('保存データを復旧するには、戦績チェッカーで出力した戦績バックアップJSONが必要です。保存領域自体を読み取れない場合は、保存済みファイルを確保してからブラウザのこのサイトのデータを削除し、バックアップを読み込んでください。');const result=C.mergeImport(state,parsed,file.name);const s=result.summary;pendingImport={parsed,fileName:file.name};
       $('import-preview').innerHTML=`<section class="import-preview"><div class="import-file-name">${icon('file')} ${esc(file.name)}</div><div class="import-stats"><div class="import-stat"><strong>${s.added}</strong><span>新しい個体</span></div><div class="import-stat"><strong>${s.updated}</strong><span>情報を更新</span></div><div class="import-stat"><strong>${s.unchanged}</strong><span>現在の情報を維持</span></div></div><div class="import-detail">${esc(parsed.trainerName||'トレーナー未登録')} · ${parsed.records.length}個体${parsed.kind==='backup'?`<br>戦績：${s.matchesAdded}試合を追加、${s.matchesUpdated}試合を更新`:'<br>個体情報の読み込みです。対戦記録はこのチェッカーで登録します。'}${s.retained?`<br>今回のJSONにない${s.retained}個体も、過去の戦績と一緒に保持します。`:''}</div>${s.warnings.length?`<div class="import-warning">${s.warnings.map(esc).join('<br>')}</div>`:''}${state.trainerName&&parsed.trainerName&&state.trainerName!==parsed.trainerName?`<div class="import-warning">トレーナー名が「${esc(state.trainerName)}」から「${esc(parsed.trainerName)}」に変わります。既存の個体と戦績は保持し、新しい個体情報を追加・更新します。</div>`:''}</section>`;$('confirm-import').disabled=false;
       if(storageReadFailed){$('import-preview').insertAdjacentHTML('beforeend','<div class="import-warning">読み取れなかった保存内容を、このバックアップの内容で置き換えます。必要な場合は、画面上部のバックアップ保存から復旧前のデータを書き出してください。</div>');$('confirm-import').textContent='バックアップで復元';}
     }catch(error){if(request!==importSequence)return;if($('import-preview'))$('import-preview').innerHTML='';if($('import-error'))$('import-error').textContent=error.message;}
@@ -2428,14 +2448,14 @@ dialog { overflow-x:hidden; }
   function showHelp(){
     const steps=[
       ['元アプリから個体情報を保存','個体情報アプリの「バックアップ」で、個体情報JSONを保存します。'],
-      ['個体情報を読み込む','右上の「バックアップ」→「クワカブデータベース個体情報のバックアップデータを読み込む」を選びます。読み込み前に追加・更新の件数を確認できます。'],
+      ['個体情報を読み込む','画面下部の「読み込み」→「クワカブデータベース個体情報のバックアップデータを読み込む」を選びます。読み込み前に追加・更新の件数を確認できます。'],
       ['対戦を記録して、戦績を見る','写真付き個体一覧で勝者・敗者を選び、決まり手と日付を保存します。試合の行をタップすると詳細・編集・削除ができます。'],
       ['対戦履歴の対象を切り替える','「個体を選ぶ」から個体ごと・種類ごと・状態ごとに切り替え、表示する対象を選びます。その個体や個体群が参加した対戦をまとめて確認できます。'],
       ['個体一覧で探す','名前・種類・トレーナー名・備考・サイズなどで検索し、種類と状態で絞り込めます。「並び順」には元アプリと同じ26通りの項目があります。'],
       ['外部トレーナーの個体を追加','対戦の個体選択から「外部トレーナーの個体を追加」を押します。写真は設定できず、このアプリの個体一覧と対戦記録に登録されます。'],
       ['勝ち方から相手を確認','内訳の対象個体を選び、この個体の勝ち方・相手の勝ち方をタップすると、勝利した対戦と相手を確認できます。']
     ];
-    openDialog(`${dialogHeader('使い方・バックアップ','元アプリの個体情報と、個体IDでつながる戦績チェッカーです。')}<div class="dialog-body">${steps.map(([title,desc],i)=>`<section class="help-step"><span class="step-number">${i+1}</span><div><h3>${title}</h3><p>${desc}</p></div></section>`).join('')}<div class="help-note"><h3>バックアップの使い分け</h3><p>元アプリの個体情報JSONは、個体の追加・更新に使います。対戦記録は含まれません。</p><p>このアプリの「戦績チェッカーのバックアップデータを出力する」は、現在の個体情報・写真・外部個体・すべての戦績を1つのJSONに保存します。引き継ぐときは「戦績チェッカーのバックアップデータを読み込む」を使います。以前の戦績バックアップも読み込めます。</p><p>外部個体はバックアップ内でも通常の個体情報と別枠に保存するため、それを元アプリに読み込んでも外部個体は追加されません。元アプリには戦績も取り込まれません。</p><p>元アプリの編集は、JSONを再読み込みしたときに反映されます。別の端末・ブラウザとは自動同期しません。移行やブラウザのデータ削除の前に、チェッカーのバックアップを出力してください。</p><h3 class="help-conflicts-heading">データが食い違う場合</h3>${importRules()}</div></div><div class="dialog-footer"><button class="btn primary" data-action="close-dialog">分かりました</button></div>`);
+    openDialog(`${dialogHeader('使い方・バックアップ','元アプリの個体情報と、個体IDでつながる戦績チェッカーです。')}<div class="dialog-body">${steps.map(([title,desc],i)=>`<section class="help-step"><span class="step-number">${i+1}</span><div><h3>${title}</h3><p>${desc}</p></div></section>`).join('')}<div class="help-note"><h3>バックアップの使い分け</h3><p>元アプリの個体情報JSONは、個体の追加・更新に使います。対戦記録は含まれません。</p><p>画面下部の「バックアップ」（戦績チェッカーのバックアップデータを出力する）は、現在の個体情報・写真・外部個体・すべての戦績を1つのJSONに保存します。引き継ぐときは「戦績チェッカーのバックアップデータを読み込む」を使います。以前の戦績バックアップも読み込めます。</p><p>外部個体はバックアップ内でも通常の個体情報と別枠に保存するため、それを元アプリに読み込んでも外部個体は追加されません。元アプリには戦績も取り込まれません。</p><p>元アプリの編集は、JSONを再読み込みしたときに反映されます。別の端末・ブラウザとは自動同期しません。移行やブラウザのデータ削除の前に、チェッカーのバックアップを出力してください。</p><h3 class="help-conflicts-heading">データが食い違う場合</h3>${importRules()}</div></div><div class="dialog-footer"><button class="btn primary" data-action="close-dialog">分かりました</button></div>`);
   }
 
   function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
