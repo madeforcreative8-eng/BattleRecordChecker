@@ -2406,11 +2406,11 @@ dialog.dual-matchup-dialog {
       return `<tr class="${tone}"><th scope="row"><button class="matchup-opponent" type="button" data-action="pair" data-a="${esc(focal.id)}" data-b="${esc(opponent.id)}" aria-label="${esc(detailLabel)}">${avatar(opponent)}<span class="matchup-opponent-copy"><strong>${esc(label(opponent))}</strong><small title="${esc(opponent.species)}">${esc(opponent.species)}</small>${statusBadge(opponent)}</span></button></th><td><div class="matchup-result">${matches.length?`<span class="matchup-score"><b class="win-mark">${wins}勝</b><b class="lose-mark">${losses}敗</b></span><small>${nf(matches.length)}試合</small><small>勝率 ${Math.round(wins/matches.length*100)}%</small>`:'<span class="muted">未対戦</span><small>0試合</small>'}</div></td><td><div class="matchup-detail">${matches.length?`<div class="matchup-methods"><div class="matchup-method"><span class="matchup-method-label win-mark">勝ち方</span>${lastWin?methodPill(lastWin.method):'<span class="muted">勝利なし</span>'}</div><div class="matchup-method"><span class="matchup-method-label lose-mark">負け方</span>${lastLoss?methodPill(lastLoss.method):'<span class="muted">負けなし</span>'}</div></div>`:'<span class="muted">—</span>'}<button class="btn ghost small" type="button" data-action="pair" data-a="${esc(focal.id)}" data-b="${esc(opponent.id)}" aria-label="${esc(detailLabel)}">詳細</button></div></td></tr>`;
     }).join('')}</tbody></table></div>`;
   }
-  function renderDualMatchupCells(focal,opponent,side,index,opponentCount){
+  function renderDualMatchupCells(focal,opponent,side,index,opponentCount,emptyLabel=''){
     const focalHeader='dual-'+side+'-focal';
     if(!opponent){
-      const empty=opponentCount?'表示する相手はありません。':'条件に合う相手がいません。';
-      return `<td colspan="2" class="dual-matchup-empty" headers="${focalHeader}">${opponentCount?`<span aria-hidden="true">—</span><span class="sr-only">${empty}</span>`:empty}</td>`;
+      const empty=emptyLabel||(opponentCount?'表示する相手はありません。':'条件に合う相手がいません。');
+      return `<td colspan="2" class="dual-matchup-empty" headers="${focalHeader}">${emptyLabel?esc(emptyLabel):opponentCount?`<span aria-hidden="true">—</span><span class="sr-only">${empty}</span>`:empty}</td>`;
     }
     const matches=pairMatches(focal.id,opponent.id);
     const wins=matches.filter(m=>m.winnerId===focal.id).length;
@@ -2429,10 +2429,19 @@ dialog.dual-matchup-dialog {
     if(!a||!b)return;
     const candidates=C.queryIndividuals(state.records,{species,status,sort:individualSortKey(sort,order)});
     const left=candidates.filter(r=>r.id!==aId),right=candidates.filter(r=>r.id!==bId);
+    const candidateIds=new Set(candidates.map(r=>r.id));
+    // Keep the left-side order, but combine the two selected opponents in one row.
+    // Every other row is keyed by the same opponent ID on both sides.
+    const mutualAnchorId=candidateIds.has(bId)?bId:aId;
+    const rowPairs=candidates.flatMap(opponent=>{
+      if(opponent.id!==aId&&opponent.id!==bId)return [{left:opponent,right:opponent}];
+      if(opponent.id!==mutualAnchorId)return [];
+      return [{left:candidateIds.has(bId)?b:null,right:candidateIds.has(aId)?a:null,mutual:true}];
+    });
     const total=Math.max(0,state.records.length-1);
     const heading=(focal,side,count)=>`<th id="dual-${side}-focal" class="dual-matchup-heading" scope="colgroup" colspan="2">${person(focal,true,true,'view-matchup')}<small class="dual-matchup-count">対戦相手 ${nf(count)} / ${nf(total)}個体</small></th>`;
     const columns=side=>`<th id="dual-${side}-opponent-heading" class="dual-opponent-header" scope="col" headers="dual-${side}-focal">対戦相手</th><th id="dual-${side}-score-heading" class="dual-score-header" scope="col" headers="dual-${side}-focal">勝敗</th>`;
-    const rows=Array.from({length:Math.max(1,left.length,right.length)},(_,index)=>`<tr>${renderDualMatchupCells(a,left[index],'left',index,left.length)}<td class="dual-matchup-gap" role="presentation" aria-hidden="true"></td>${renderDualMatchupCells(b,right[index],'right',index,right.length)}</tr>`).join('');
+    const rows=(rowPairs.length?rowPairs:[{}]).map((row,index)=>`<tr>${renderDualMatchupCells(a,row.left,'left',index,left.length,row.mutual&&!row.left?'絞り込み条件の対象外':'')}<td class="dual-matchup-gap" role="presentation" aria-hidden="true"></td>${renderDualMatchupCells(b,row.right,'right',index,right.length,row.mutual&&!row.right?'絞り込み条件の対象外':'')}</tr>`).join('');
     // A shared table row gives the left and right frames the same natural height.
     results.innerHTML=`<table class="dual-matchup-table"><caption class="sr-only">左：${esc(label(a))}、右：${esc(label(b))}。相手ごとの全期間の勝敗</caption><colgroup><col class="dual-opponent-col"><col class="dual-score-col"></colgroup><colgroup><col class="dual-gap-col"></colgroup><colgroup><col class="dual-opponent-col"><col class="dual-score-col"></colgroup><thead><tr>${heading(a,'left',left.length)}<th class="dual-matchup-gap" role="presentation" aria-hidden="true"></th>${heading(b,'right',right.length)}</tr><tr>${columns('left')}<th class="dual-matchup-gap" role="presentation" aria-hidden="true"></th>${columns('right')}</tr></thead><tbody>${rows}</tbody></table>`;
     const note=$('dual-matchup-filter-note');
