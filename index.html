@@ -1017,6 +1017,9 @@ dialog { overflow-x:hidden; }
 .data-footer .backup-menu button{padding:12px 10px;font-size:.8125rem;color:var(--ink);}
 @media(max-width:760px){.page-footer.data-footer{margin-top:20px;padding:16px 0 13px;}.data-footer .footer-file-actions{gap:7px;margin-top:11px;}.mobile-brand .mobile-brand-copy{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;white-space:normal;}}
 
+/* Preserve centered photo/name cards when linking the pair to its matchup tables. */
+.pair-dialog-summary .person-click { text-align:center; border-radius:8px; }
+.matchup-panel { scroll-margin-top:12px; }
 </style>
 </head>
 <body>
@@ -1883,7 +1886,11 @@ dialog { overflow-x:hidden; }
   const methodPill = (method,count) => {const i=C.METHODS.indexOf(method); return `<span class="method-pill method-${i}">${icon(methodIcons[i])}${esc(method)}${count == null ? '' : ` <b>${nf(count)}</b>`}</span>`;};
   function externalLabel(r){const name=String(r?.trainerName||'').trim();return name?`外部「${name.endsWith('さん')?name:name+'さん'}の個体」`:'外部トレーナーの個体';}
   function avatar(r, extra='') {if(r?.external){const text=esc(externalLabel(r));return `<span class="avatar external-avatar ${extra}" role="img" aria-label="${text}" title="${text}"><span class="external-avatar-label">${text}</span></span>`;}return `<span class="avatar ${extra}">${r?.photo ? `<img src="${esc(r.photo)}" alt="${esc(label(r))}" loading="lazy">` : icon('beetle')}</span>`;}
-  function person(r, clickable=true, details=true) {const tag=clickable?'button':'div';return `<${tag} class="person ${clickable?'person-click':''}" ${clickable?`type="button" data-action="profile" data-id="${esc(r?.id)}"`:''}>${avatar(r)}<span><span class="person-name">${esc(label(r))}</span>${details?`<span class="person-detail" style="display:block">${esc(fullSize(r))}</span>`:''}</span></${tag}>`;}
+  function person(r, clickable=true, details=true, action='profile') {
+    const tag=clickable?'button':'div';
+    const linkLabel=action==='view-matchup'?`aria-label="${esc(label(r)+'の相性表を見る')}" title="この個体の相性表を見る"`:'';
+    return `<${tag} class="person ${clickable?'person-click':''}" ${clickable?`type="button" data-action="${esc(action)}" data-id="${esc(r?.id)}" ${linkLabel}`:''}>${avatar(r)}<span><span class="person-name">${esc(label(r))}</span>${details?`<span class="person-detail" style="display:block">${esc(fullSize(r))}</span>`:''}</span></${tag}>`;
+  }
   function statusBadge(r) {return `<span class="badge ${r.status==='現役'?'':r.status==='休養中'?'rest':'neutral'}">${esc(r.status)}</span>`;}
   const ui={view:['records','matrix','individuals'].includes(location.hash.slice(1))?location.hash.slice(1):'records',menu:false,search:'',individual:'',historyMode:'all',historySpecies:'',historyStatus:'',method:'',result:'all',period:'all',page:1,historyOrder:'newest',profileHistoryOrder:'newest',rosterSearch:'',rosterSpecies:'',rosterStatus:'',rosterSort:'strength',rosterOrder:'desc',matrixRow:'',matrixSpecies:'',matrixStatus:'',matrixSort:'strength',matrixOrder:'desc',pairA:'',pairB:'',analysisId:'',rankingSort:'wins',rankingOrder:'desc',rankingPeriod:'all',rankingSpecies:'',rankingStatus:''};
   let state=C.emptyState(), repo=null, revision=null, recordMap=new Map(), stats=C.stats(state), pairMap=new Map(), byRecord=new Map();
@@ -2433,10 +2440,19 @@ dialog { overflow-x:hidden; }
     previousButton?.focus({preventScroll:true});
     dialog.scrollTop=saved.scrollTop;
   }
+  function showIndividualMatrix(id){
+    if(!recordMap.has(id)){toast('この個体は見つかりません。');return;}
+    closeDialog(false);
+    ui.view='matrix';ui.matrixRow=id;ui.menu=false;
+    location.hash='matrix';
+    render();
+    $('matrix-row-trigger')?.focus({preventScroll:true});
+    document.querySelector('.matchup-panel')?.scrollIntoView({behavior:'auto',block:'start'});
+  }
   function showPair(aId,bId,profileReturn=null){
     if(!aId||!bId||aId===bId||!recordMap.has(aId)||!recordMap.has(bId)){toast('比較する2個体を選択してください。');return;}
     ui.pairA=aId;ui.pairB=bId;const a=recordMap.get(aId),b=recordMap.get(bId),matches=ordered(pairMatches(aId,bId)),winsA=matches.filter(m=>m.winnerId===aId).length;
-    openDialog(`${dialogHeader('直接対決の戦績','勝敗と、それぞれの勝ち方を確認できます。')}<div class="dialog-body"><div class="pair-dialog-summary">${person(a,false)}<div><div class="pair-numbers">${winsA}<span class="divider">:</span>${matches.length-winsA}</div><span class="pair-meta">${matches.length}試合の勝数</span></div>${person(b,false)}</div>${matches.length?`${renderPairWins(a,b,matches)}<section class="profile-section"><h3>${esc(label(a))}から見た対戦履歴</h3>${renderPersonalHistory(matches,aId)}</section>`:'<div class="no-records">この2個体の対戦は、まだ記録されていません。</div>'}</div><div class="dialog-footer"><button class="btn" data-action="close-dialog" ${profileReturn?'aria-label="個体の戦績に戻る"':''}>${profileReturn?'戻る':'閉じる'}</button><button class="btn primary" data-action="new-pair-match" data-a="${esc(aId)}" data-b="${esc(bId)}">${icon('plus')}この対戦を記録</button></div>`,'wide-dialog');
+    openDialog(`${dialogHeader('直接対決の戦績','勝敗と、それぞれの勝ち方を確認できます。')}<div class="dialog-body"><div class="pair-dialog-summary">${person(a,true,true,'view-matchup')}<div><div class="pair-numbers">${winsA}<span class="divider">:</span>${matches.length-winsA}</div><span class="pair-meta">${matches.length}試合の勝数</span></div>${person(b,true,true,'view-matchup')}</div>${matches.length?`${renderPairWins(a,b,matches)}<section class="profile-section"><h3>${esc(label(a))}から見た対戦履歴</h3>${renderPersonalHistory(matches,aId)}</section>`:'<div class="no-records">この2個体の対戦は、まだ記録されていません。</div>'}</div><div class="dialog-footer"><button class="btn" data-action="close-dialog" ${profileReturn?'aria-label="個体の戦績に戻る"':''}>${profileReturn?'戻る':'閉じる'}</button><button class="btn primary" data-action="new-pair-match" data-a="${esc(aId)}" data-b="${esc(bId)}">${icon('plus')}この対戦を記録</button></div>`,'wide-dialog');
     if(profileReturn){
       dialogBackAction=()=>returnToProfile(profileReturn);
       const closeButton=$('active-dialog')?.querySelector('.dialog-header [data-action="close-dialog"]');
@@ -2516,6 +2532,7 @@ dialog { overflow-x:hidden; }
     else if(a==='return-method')closeDialog();
     else if(a==='close-dialog')closeDialog();
     else if(a==='profile')showProfile(id);
+    else if(a==='view-matchup')showIndividualMatrix(id);
     else if(a==='pair')showPair(button.dataset.a,button.dataset.b,captureProfileReturn(button));
     else if(a==='swap-contenders'){const w=$('match-winner').value;$('match-winner').value=$('match-loser').value;$('match-loser').value=w;updateMatchPreview();}
     else if(a==='menu'){ui.menu=!ui.menu;render();$('export-menu-button')?.focus({preventScroll:true});}
